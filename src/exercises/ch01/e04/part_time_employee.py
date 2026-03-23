@@ -6,4 +6,4 @@ class PartTimeEmployee(Employee):
         super().__init__(name, salaryPerHour * workedHours)
 
     def __str__(self):
-        return f"Part time employee(name={self.name}, salary={self.salary})"
+        return f"{self.name} (PartTime) - ${self.salary}"

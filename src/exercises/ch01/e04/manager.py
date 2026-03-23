@@ -1,6 +1,9 @@
-class Manager:
+from exercises.ch01.e04.employee import Employee
+
+
+class Manager(Employee):
     def __init__(self, name, salary, bonuses: list[int]):
         super().__init__(name, salary + sum(bonuses))
 
     def __str__(self):
-        return f"{self.name} (Manager) - ${self.salary})"
+        return f"{self.name} (Manager) - ${self.salary}"
