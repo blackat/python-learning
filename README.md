@@ -1,4 +1,4 @@
-# myproject
+# Python - Theory and Exercises
 
 ## Setup
 
