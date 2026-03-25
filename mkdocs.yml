@@ -1,4 +1,5 @@
 site_name: Python Learning
+site_url: https://blackat.github.io/python-learning/
 site_description: My personal Python learning journal — theory, examples, and exercises.
 docs_dir: docs
 exclude_docs: |
@@ -33,8 +34,8 @@ markdown_extensions:
       permalink: true
 
 nav:
-  - Home: docs/index.md
+  - Home: index.md
   - Chapters:
     - OOP:
-      - Foundation: src/lessons/ch01_oop/theory/notes_01_foundation.md
-      - Advanced: src/lessons/ch01_oop/theory/notes_02_advanced.md
+      - Foundation: ch01_oop/notes_01_foundation.md
+      - Advanced: ch01_oop/notes_02_advanced.md
