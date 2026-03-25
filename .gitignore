@@ -1,10 +1,12 @@
 # Ptyhon Virtual Environment
-.venv
+.venv/
 
 # Pyhon Cache
 __pycache__/
 *.pyc
 .pytest_cache/
+dist/
+.ruff_cache/
 
 # Python tests
 coverage

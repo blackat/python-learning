@@ -7,7 +7,9 @@ Here are 10 exercises organized by difficulty — beginner through advanced.
 ## 🟢 Beginner
 
 ### Exercise 1 — Basic Class
+
 Create a `Rectangle` class that:
+
 - Takes `width` and `height` in `__init__`
 - Has an `area()` method
 - Has a `perimeter()` method
@@ -29,7 +31,9 @@ print(s.is_square())    # True
 ---
 
 ### Exercise 2 — Class & Instance Attributes
+
 Create a `BankAccount` class that:
+
 - Tracks total number of accounts created (class attribute)
 - Has `owner`, `balance` (instance attributes)
 - Has `deposit(amount)` and `withdraw(amount)` methods
@@ -52,7 +56,9 @@ acc2.withdraw(1000)                 # ValueError: Insufficient funds
 ---
 
 ### Exercise 3 — Properties
+
 Create a `Temperature` class that:
+
 - Stores temperature internally in **Celsius**
 - Exposes a `celsius` property with validation (cannot be below -273.15)
 - Exposes a `fahrenheit` property that converts automatically
@@ -77,7 +83,9 @@ t.celsius = -300        # ValueError: Below absolute zero
 ## 🟡 Intermediate
 
 ### Exercise 4 — Inheritance
+
 Model a company's staff. Create:
+
 - `Employee` base class with `name`, `salary`, and `get_pay()` method
 - `FullTimeEmployee(Employee)` — fixed monthly salary
 - `PartTimeEmployee(Employee)` — hourly rate × hours worked
@@ -101,7 +109,9 @@ print_payroll(staff)
 ---
 
 ### Exercise 5 — Magic Methods
+
 Create a `Vector2D` class that supports:
+
 - `__add__`, `__sub__`, `__mul__` (scalar), `__rmul__`
 - `__neg__`, `__abs__` (magnitude)
 - `__eq__` and `__lt__` (compare by magnitude)
@@ -128,7 +138,9 @@ print(v1.normalize())   # Vector2D(0.6, 0.8)
 ---
 
 ### Exercise 6 — Abstract Base Classes
+
 Design a **payment system**. Create:
+
 - Abstract base class `PaymentMethod` with abstract methods `pay(amount)` and `refund(amount)`, and abstract property `name`
 - `CreditCard(PaymentMethod)` — tracks spending limit and current balance
 - `PayPal(PaymentMethod)` — tracks email and balance

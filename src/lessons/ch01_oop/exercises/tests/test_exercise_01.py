@@ -1,4 +1,4 @@
-from exercises.ch01.e01.rectangle import Rectangle
+from lessons.ch01_oop.exercises.exercise_01 import Rectangle
 
 
 def test_rectangle_happy_path():
