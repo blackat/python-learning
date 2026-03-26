@@ -22,6 +22,9 @@ theme:
     - content.code.copy
     - toc.integrate
 
+extra_css:
+  - stylesheets/extra.css
+
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
@@ -38,4 +41,6 @@ nav:
   - Chapters:
     - OOP:
       - Foundation: ch01_oop/notes_01_foundation.md
-      - Advanced: ch01_oop/notes_02_advanced.md
+      - Properties: ch01_oop/notes_02_properties.md
+      - Advanced: ch01_oop/notes_03_advanced.md
+      - Pythonic Way: ch01_oop/notes_04_pythonic.md

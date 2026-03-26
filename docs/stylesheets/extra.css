@@ -1,0 +1,239 @@
+/* ============================================================
+   Brand palette
+   ============================================================ */
+:root {
+  --color-amber:      #E8922A;
+  --color-amber-dim:  #7A4510;
+  --color-green:      #5AAF78;
+  --color-green-dim:  #1a3d28;
+  --color-red:        #C45C5C;
+  --color-red-dim:    #3d1a1a;
+  --color-red-glow:   #e055557a;
+  --color-teal:       #5BA8A0;
+  --color-teal-dim:   #2A5550;
+
+  /* Neutral base */
+  --color-bg:         #0f1117;
+  --color-bg-raised:  #161b22;
+  --color-bg-surface: #1c2128;
+  --color-fg:         #e6edf3;
+  --color-fg-muted:   #848d97;
+  --color-border:     #30363d;
+}
+
+/* ============================================================
+   Material overrides — dark scheme
+   ============================================================ */
+[data-md-color-scheme="slate"] {
+
+  /* Top bar */
+  --md-primary-fg-color:        var(--color-bg-raised);
+  --md-primary-fg-color--light: var(--color-bg-surface);
+  --md-primary-fg-color--dark:  var(--color-bg);
+  --md-primary-bg-color:        var(--color-fg);
+
+  /* Links, hover, active highlights */
+  --md-accent-fg-color:                var(--color-teal);
+  --md-accent-fg-color--transparent:   #5BA8A020;
+
+  /* Page background */
+  --md-default-bg-color:        var(--color-bg);
+  --md-default-bg-color--light: var(--color-bg-raised);
+  --md-default-bg-color--lighter: var(--color-bg-surface);
+
+  /* Body text */
+  --md-default-fg-color:        var(--color-fg);
+  --md-default-fg-color--light: var(--color-fg-muted);
+  --md-default-fg-color--lighter: #484f58;
+
+  /* Code blocks */
+  --md-code-bg-color:           var(--color-bg-surface);
+  --md-code-fg-color:           var(--color-fg);
+
+  /* Footer */
+  --md-footer-bg-color:         var(--color-bg-raised);
+  --md-footer-fg-color:         var(--color-fg-muted);
+}
+
+/* ============================================================
+   Navigation
+   ============================================================ */
+
+/* Active nav item — amber accent */
+.md-nav__link--active,
+.md-nav__link:focus,
+.md-nav__link:hover {
+  color: var(--color-amber) !important;
+}
+
+/* Nav section titles */
+.md-nav__title {
+  color: var(--color-fg-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   Typography
+   ============================================================ */
+.md-typeset h1 {
+  color: var(--color-amber);
+  font-size: 2rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--color-amber-dim);
+  padding-bottom: 0.3em;
+}
+
+.md-typeset h2 {
+  color: var(--color-teal);
+  font-size: 1.4rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-teal-dim);
+  padding-bottom: 0.2em;
+}
+
+.md-typeset h3 {
+  color: var(--color-fg);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Links */
+.md-typeset a {
+  color: var(--color-teal);
+}
+
+.md-typeset a:hover {
+  color: var(--color-amber);
+}
+
+/* ============================================================
+   Code
+   ============================================================ */
+.md-typeset code {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.85em;
+  color: var(--color-amber);
+  background: var(--color-bg-surface);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+
+/* Code blocks */
+.md-typeset pre > code {
+  color: var(--color-fg);
+  background: transparent;
+  padding: 0;
+}
+
+.highlight {
+  border-left: 3px solid var(--color-teal-dim);
+  border-radius: 6px;
+}
+
+/* ============================================================
+   Admonitions — mapped to brand colours
+   ============================================================ */
+
+/* note → teal */
+.md-typeset .admonition.note,
+.md-typeset details.note {
+  border-color: var(--color-teal);
+  background: var(--color-teal-dim);
+}
+.md-typeset .note > .admonition-title,
+.md-typeset .note > summary {
+  background: var(--color-teal-dim);
+  color: var(--color-teal);
+}
+.md-typeset .note > .admonition-title::before,
+.md-typeset .note > summary::before {
+  background-color: var(--color-teal);
+}
+
+/* tip / hint → amber */
+.md-typeset .admonition.tip,
+.md-typeset .admonition.hint,
+.md-typeset details.tip {
+  border-color: var(--color-amber);
+  background: var(--color-amber-dim);
+}
+.md-typeset .tip > .admonition-title,
+.md-typeset .hint > .admonition-title,
+.md-typeset .tip > summary {
+  background: var(--color-amber-dim);
+  color: var(--color-amber);
+}
+.md-typeset .tip > .admonition-title::before,
+.md-typeset .tip > summary::before {
+  background-color: var(--color-amber);
+}
+
+/* warning / danger → red */
+.md-typeset .admonition.warning,
+.md-typeset .admonition.danger,
+.md-typeset details.warning {
+  border-color: var(--color-red);
+  background: var(--color-red-dim);
+}
+.md-typeset .warning > .admonition-title,
+.md-typeset .danger > .admonition-title {
+  background: var(--color-red-dim);
+  color: var(--color-red);
+}
+.md-typeset .warning > .admonition-title::before,
+.md-typeset .danger > .admonition-title::before {
+  background-color: var(--color-red);
+}
+
+/* success → green */
+.md-typeset .admonition.success,
+.md-typeset details.success {
+  border-color: var(--color-green);
+  background: var(--color-green-dim);
+}
+.md-typeset .success > .admonition-title {
+  background: var(--color-green-dim);
+  color: var(--color-green);
+}
+.md-typeset .success > .admonition-title::before {
+  background-color: var(--color-green);
+}
+
+/* ============================================================
+   Tables
+   ============================================================ */
+.md-typeset table:not([class]) {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+  background: var(--color-bg-surface);
+  color: var(--color-amber);
+  border-bottom: 1px solid var(--color-amber-dim);
+}
+
+.md-typeset table:not([class]) tr:hover {
+  background: var(--color-bg-raised);
+}
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.md-grid {
+  max-width: 1200px;
+}
+
+/* Sidebar */
+.md-sidebar {
+  background: var(--color-bg-raised);
+}
+
+/* Top bar border */
+.md-header {
+  border-bottom: 1px solid var(--color-teal-dim);
+  box-shadow: none;
+}
