@@ -1,0 +1,8 @@
+{
+  "name": "Python Learning",
+  "short_name": "PyLearn",
+  "start_url": "/python-learning/",
+  "display": "standalone",
+  "theme_color": "#E8922A",
+  "background_color": "#0f1117"
+}

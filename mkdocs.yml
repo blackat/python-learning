@@ -11,16 +11,23 @@ exclude_docs: |
 
 theme:
   name: material
+  custom_dir: docs/overrides
   palette:
     scheme: slate
-    primary: indigo
-    accent: indigo
+    primary: custom
+    accent: custom
   features:
     - navigation.sections
     - navigation.expand
     - navigation.top
     - content.code.copy
     - toc.integrate
+
+extra:
+  manifest: manifest.webmanifest
+  meta:
+    - name: theme-color
+      content: "#E8922A"
 
 extra_css:
   - stylesheets/extra.css
