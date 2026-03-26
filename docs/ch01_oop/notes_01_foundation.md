@@ -1,42 +1,133 @@
 # Object-Oriented Programming in Python
 
----
+## Classes & Objects
 
-## 1. Classes & Objects
+A **class** is a blueprint. It describes what an object *is* and what it can *do*. An **instance** is a concrete object created from that blueprint — each one carries its own data but shares the same behaviour.
 
 ```python
 class Dog:
-    # Class attribute (shared by all instances)
+    # Class attribute — shared by ALL instances
     species = "Canis familiaris"
 
-    # Constructor / initializer
     def __init__(self, name, age):
-        # Instance attributes (unique to each object)
+        # Instance attributes — unique to EACH object
         self.name = name
         self.age = age
 
-    # Instance method
     def bark(self):
         return f"{self.name} says Woof!"
 
-    def __str__(self):          # Human-readable string
+    def __str__(self):       # print(dog)  → human-readable
         return f"Dog(name={self.name}, age={self.age})"
 
-    def __repr__(self):         # Developer-facing string
+    def __repr__(self):      # repr(dog)   → developer-facing
         return f"Dog('{self.name}', {self.age})"
+```
 
+### The Pythonic Way
 
-# Creating objects (instances)
+The Python philosophy, don't write boilerplate the language can generate for you.
+
+**dataclasses** eliminate the boilerplate that makes classes feel repetitive:
+
+```python
+# ❌ Un-pythonic — lots of ceremony
+class Dog:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def __repr__(self):
+        return f"Dog(name={self.name}, age={self.age})"
+
+    def __eq__(self, other):
+        return self.name == other.name and self.age == other.age
+```
+
+```python
+# ✅ Pythonic — declare what matters, Python handles the rest
+from dataclasses import dataclass
+
+@dataclass
+class Dog:
+    name: str
+    age: int
+```
+
+That single `@dataclass` decorator auto-generates `__init__`, `__repr__`, and `__eq__` for you.
+
+#### When to use what
+
+| Situation | Use |
+|-----------|-----|
+| Primarily storing data | `@dataclass` |
+| Need validation, properties, complex logic | plain `class` |
+| Immutable data (like a coordinate) | `@dataclass(frozen=True)` |
+| Need slots for memory efficiency | `@dataclass(slots=True)` |
+
+#### The rule of thumb
+
+Start with a `@dataclass`, upgrade to a plain class only when you need behaviour that dataclasses can't express cleanly.
+
+---
+
+## Class vs instance attributes
+
+`species` lives on the **class** — one value, shared by every dog you create. `name` and `age` live on the **instance** — each dog gets its own copy.
+
+```python
 dog1 = Dog("Rex", 3)
 dog2 = Dog("Buddy", 5)
 
-print(dog1.bark())        # Rex says Woof!
-print(dog1.species)       # Canis familiaris  (class attribute)
-print(dog2.species)       # Canis familiaris  (same for all)
-print(dog1)               # Dog(name=Rex, age=3)  → calls __str__
+print(dog1.species)   # Canis familiaris  ← same for all
+print(dog2.species)   # Canis familiaris  ← same for all
+print(dog1.name)      # Rex              ← unique to dog1
+print(dog2.name)      # Buddy            ← unique to dog2
 ```
 
-### What is `__repr__` ?
+Visually:
+
+```
+Dog (class)
+│   species = "Canis familiaris"   ← shared
+│
+├── dog1 (instance)
+│     name = "Rex", age = 3        ← unique
+│
+└── dog2 (instance)
+      name = "Buddy", age = 5      ← unique
+```
+
+### `self` — the object talking to itself
+
+Every method receives `self` as the first argument. It is how the object refers to itself — how `bark()` knows *which* dog is barking.
+
+```python
+print(dog1.bark())   # Rex says Woof!
+print(dog2.bark())   # Buddy says Woof!
+```
+
+Python rewrites `dog1.bark()` as `Dog.bark(dog1)` under the hood — `self` is just `dog1` passed in automatically.
+
+### `__str__` and `__repr__`
+
+Both control how the object is displayed, but for different audiences:
+
+| Method | Triggered by | For |
+|--------|-------------|-----|
+| `__str__` | `print(dog)`, `str(dog)` | End users — readable |
+| `__repr__` | REPL, debugger, `repr(dog)` | Developers — unambiguous |
+
+```python
+print(dog1)    # Dog(name=Rex, age=3)   ← __str__
+repr(dog1)     # Dog('Rex', 3)          ← __repr__
+```
+
+If you only define one, define `__repr__`, Python falls back to it when `__str__` is missing.
+
+**The key idea:** the class is the mold, instances are the objects cast from it. The mold stays the same — each cast comes out with its own data.
+
+### What is `__repr__`?
 
 `__repr__` is a special Python method that defines the **string representation** of an object — what you see when you print or inspect it.
 
@@ -86,8 +177,9 @@ If you only define `__repr__` — `print()` will fall back to it. If you define 
 
 For most classes defining just `__repr__` is enough.
 
+---
 
-## 2. Inheritance
+## Inheritance
 
 ```python
 class Animal:
@@ -126,7 +218,7 @@ print(issubclass(Dog, Animal))  # True
 
 ---
 
-## 3. `super()` — Calling the Parent
+## `super()` — Calling the Parent
 
 ```python
 class Animal:
@@ -148,7 +240,7 @@ print(dog.info())   # Rex (Labrador), age 3
 
 ---
 
-## 4. Encapsulation — Public, Protected, Private
+## Encapsulation: Public, Protected, Private
 
 ```python
 class BankAccount:
@@ -172,271 +264,7 @@ print(acc._account_no)     # 12345       ⚠️ works but discouraged
 print(acc.get_balance())   # 1000        ✅
 ```
 
----
-
-## 5. `@property` — Smart Attributes
-
-```python
-class Circle:
-    def __init__(self, radius):
-        self._radius = radius
-
-    @property
-    def radius(self):               # Getter
-        return self._radius
-
-    @radius.setter
-    def radius(self, value):        # Setter with validation
-        if value < 0:
-            raise ValueError("Radius cannot be negative")
-        self._radius = value
-
-    @property
-    def area(self):                 # Computed property (no setter needed)
-        import math
-        return math.pi * self._radius ** 2
-
-
-c = Circle(5)
-print(c.radius)    # 5       ← calls getter
-print(c.area)      # 78.53   ← computed on the fly
-c.radius = 10      # calls setter
-# c.radius = -1    # ❌ ValueError
-```
-
-### 🔥 Important
-
-`self._celsius` and `self_celsius` are the same thing. Here is why:
-
-When you call `print(t.celsius)` Python runs the **getter**:
-
-```python
-@property
-def celsius(self) -> float:
-    return self._celsius  # ← reads from _celsius
-```
-
-So `t.celsius` and `t._celsius` **always return the same value**. The property `celsius` is just a clean public interface that reads from `_celsius` under the hood.
-
-Think of it like this:
-
-```
-t.celsius       → triggers the getter → returns self._celsius
-t._celsius      → direct access to the private attribute
-```
-
-Both give you the same number. The difference is:
-
-- `t.celsius` — the **public door** — goes through the getter, which could have logic in it
-- `t._celsius` — the **back door** — bypasses the getter, direct access
-
-#### Depper
-
-Let me walk through it step by step with a concrete mental model.
-
----
-
-**Think of `_celsius` as a box and `celsius` as the window to that box**
-
-```bash
-┌─────────────────────────────┐
-│   Temperature object        │
-│                             │
-│   _celsius = 100.0  ← box  │
-│                             │
-│   celsius  ← window to box │
-└─────────────────────────────┘
-```
-
-`_celsius` is where the value physically lives in memory. `celsius` is the property — a controlled way to read from and write to that box.
-
----
-
-**Three different ways to interact with the value:**
-
-```python
-t = Temperature(100)
-
-# 1 — write through the public window (setter runs)
-t.celsius = 50
-# → setter checks value >= -273.15
-# → stores 50 into self._celsius
-
-# 2 — read through the public window (getter runs)
-print(t.celsius)
-# → getter returns self._celsius
-# → prints 50
-
-# 3 — direct back door access (no getter/setter, no validation)
-print(t._celsius)
-# → prints 50 directly, bypassing everything
-```
-
-All three see the same number. The difference is what happens in between.
-
----
-
-**Why not just use `celsius` everywhere and forget `_celsius`?**
-
-Because if you tried to store to `celsius` inside the class itself:
-
-```python
-@celsius.setter
-def celsius(self, value):
-    self.celsius = value   # ← WRONG
-```
-
-Python sees `self.celsius = value` and thinks — "celsius has a setter, let me call it." Which calls the setter. Which calls `self.celsius = value` again. Which calls the setter again. Forever.
-
-```bash
-setter called
-  → self.celsius = value
-      → setter called
-          → self.celsius = value
-              → setter called
-                  → ...
-                      → RecursionError 💥
-```
-
-`self._celsius = value` breaks the loop because `_celsius` has no setter — it is just a plain attribute. Python stores the value directly without triggering anything.
-
----
-
-**The naming convention visualised:**
-
-```python
-class Temperature:
-    def __init__(self, celsius):
-        self.celsius = celsius      # ← uses the PUBLIC setter (with validation)
-
-    @property
-    def celsius(self):
-        return self._celsius        # ← reads the PRIVATE storage
-
-    @celsius.setter
-    def celsius(self, value):
-        if value < -273.15:
-            raise ValueError()
-        self._celsius = value       # ← writes to PRIVATE storage directly
-```
-
-Reading the flow:
-
-```python
-Temperature(100)
-  → __init__ runs
-  → self.celsius = 100          calls setter ✓
-      → validation passes
-      → self._celsius = 100     stores directly ✓
-
-t.celsius                       calls getter ✓
-  → return self._celsius        reads directly ✓
-  → returns 100
-```
-
----
-
-### The rule in one sentence
-
-Inside the class, always read and write `_celsius` directly. Outside the class, always use `celsius`. The property bridges the two — it is the translation layer between the outside world and the internal storage.
-
----
-
-### Getter and Setter, the Python way
-
-When to use `@property`:
-
-- You need **validation** on assignment
-- You need to **compute** a value rather than store it
-- You need **side effects** when a value changes — like updating a cache or notifying something
-- You want to make an attribute **read-only** — define the getter but no setter
-
-When NOT to use it:
-
-- If the attribute is just storing a value with no logic — use a plain attribute. Do not add `@property` just to follow a Java habit.
-- That is the most common mistake Python beginners make coming from other languages.
-
-#### The practical takeaway
-
-```python
-self.celsius   # public — use freely from anywhere
-self._celsius  # "private by convention" — please don't touch this from outside
-self.__celsius # name-mangled — harder to access but still not truly private
-```
-
-The single underscore `_celsius` is a gentleman's agreement — it says *this is an internal implementation detail, don't rely on it.* **Nothing stops you from accessing it externally**, but you are signalling to other developers that they should not.
-
-> In Python you do not need to make everything private by default like in Java. Start with public attributes. Use _name when you want to signal **internal use only**. Use `@property` when you need logic around access. That is the complete picture.
-
-- **Java says:** I do not trust you, I will enforce access rules.
-- **Python says:** I trust you, I will tell you my intentions through naming conventions and you will respect them.
-
----
-
-**The full flow for `t.fahrenheit = 32`:**
-
-```python
-t.fahrenheit = 32
-  → fahrenheit setter runs
-  → self.celsius = (32 - 32) * 5 / 9  =  0.0
-      → celsius setter runs
-      → self._celsius = 0.0          ← stored here
-
-print(t.celsius)
-  → celsius getter runs
-  → return self._celsius             ← reads 0.0
-  → prints 0.0  ✓
-```
-
-`_celsius` is the **storage**. `celsius` is the **interface**. They always point to the same value — you just access it through the clean public name `celsius` rather than the internal `_celsius`.
-
----
-
-### Plain attribute vs. `@property`
-
-It is completely correct — because you have no `@property` defined for `name` or `salary`.
-
-The recursion problem only happens when you define a `@property` with the same name as the attribute you are trying to store to. Here is the key distinction:
-
----
-
-**No property — plain attribute — always correct:**
-
-```python
-class Employee:
-    def __init__(self, name, salary):
-        self.name = name      # plain attribute, stored directly
-        self.salary = salary  # plain attribute, stored directly
-```
-
-`self.name = name` just stores the value directly in memory. No getter, no setter, no interception. Simple and correct.
-
----
-
-**With property — needs the underscore:**
-
-```python
-class Employee:
-    def __init__(self, name, salary):
-        self.name = name       # plain attribute, fine
-        self.salary = salary   # ← PROBLEM if you define @property salary below
-
-    @property
-    def salary(self):
-        return self._salary    # reads from _salary
-
-    @salary.setter
-    def salary(self, value):
-        if value < 0:
-            raise ValueError("salary cannot be negative")
-        self._salary = value   # stores to _salary
-```
-
-Now `self.salary = salary` in `__init__` triggers the setter — which is actually what you want here. And the setter stores to `self._salary` — no recursion.
-
----
-
-**The simple rule:**
+### The simple rule
 
 | Situation | What to use |
 |---|---|
@@ -447,7 +275,7 @@ Your `Employee` class is perfectly written. You only need the underscore pattern
 
 ---
 
-## 6. Class Methods & Static Methods
+## Class Methods & Static Methods
 
 ```python
 class Employee:
@@ -482,7 +310,7 @@ print(Employee.is_valid_salary(50000))   # True
 
 ---
 
-## 7. Multiple Inheritance & MRO
+## Multiple Inheritance & MRO
 
 ```python
 class A:
@@ -522,11 +350,3 @@ Python uses **C3 linearization** to determine which method wins. Always check `_
 | `@staticmethod` | Utility method, no class/instance access |
 | `__str__` / `__repr__` | String representations |
 | `_x` / `__x` | Protected / private conventions |
-
----
-
-**Want to go deeper into any of these?** The natural next steps are:
-
-- **Magic/Dunder methods** (`__add__`, `__len__`, `__eq__`, etc.) — making your objects behave like built-ins
-- **Abstract Base Classes** — enforcing interfaces
-- **Dataclasses** — cleaner class definitions with less boilerplate

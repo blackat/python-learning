@@ -1,26 +1,26 @@
 # Python Learning
 
-Welcome to my Python learning journal.
+A structured, test-driven approach to learning Python — theory notes, runnable examples, and exercises that go from 🔴 to 🟢.
 
-## How this works
+---
 
-Each topic has:
+## How it works
 
-- **`theory/notes.md`** — concepts explained in my own words
-- **`theory/examples.py`** — runnable snippets to see theory in action
-- **`exercises/`** — stubs to fill in, validated by tests
+Each chapter follows the same flow:
+```
+read notes → run examples → fill in exercises → run tests
+```
 
-## Progress
+| What | Where | Purpose |
+|------|-------|---------|
+| 📖 Theory notes | `docs/chXX_*/` | Concepts explained in my own words |
+| 🐍 Examples | `src/exercises/chXX_*/examples.py` | Runnable snippets to see theory in action |
+| ✏️ Exercises | `src/exercises/chXX_*/` | Stubs to fill in |
+| ✅ Tests | `src/exercises/chXX_*/tests/` | Prove the solution is correct |
 
-| Topic | Notes | Exercises |
-|-------|-------|-----------|
-| Basics | ✅ | 🔄 |
-| Control Flow | 📝 | ⬜ |
-| Functions | ⬜ | ⬜ |
-| Data Structures | ⬜ | ⬜ |
-| Modules & Packages | ⬜ | ⬜ |
-| File I/O | ⬜ | ⬜ |
-| Error Handling | ⬜ | ⬜ |
-| OOP | ⬜ | ⬜ |
+---
 
-✅ Done · 🔄 In progress · 📝 Notes only · ⬜ Not started
+## Chapters
+
+- [OOP — Foundation](ch01_oop/notes_01_foundation.md)
+- [OOP — Advanced](ch01_oop/notes_02_advanced.md)

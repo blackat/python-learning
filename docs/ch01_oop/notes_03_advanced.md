@@ -1,12 +1,11 @@
 # Magic/Dunder Methods, Abstract Base Classes & Dataclasses
 
----
-
-## 1. Magic / Dunder Methods
+## Magic / Dunder Methods
 
 These let your objects behave like Python built-ins. The name "dunder" = **d**ouble **under**score.
 
 ### String Representation
+
 ```python
 class Book:
     def __init__(self, title, author, pages):
@@ -25,9 +24,8 @@ print(b)        # '1984' by Orwell       ← __str__
 print(repr(b))  # Book('1984', 'Orwell', 328)  ← __repr__
 ```
 
----
-
 ### Comparison Methods
+
 ```python
 class Temperature:
     def __init__(self, celsius):
@@ -62,11 +60,10 @@ temps = [Temperature(30), Temperature(10), Temperature(20)]
 print(sorted(temps))   # [10°C, 20°C, 30°C]
 ```
 
-> 💡 **Shortcut:** Use `@functools.total_ordering` — define `__eq__` and ONE of `__lt__`/`__gt__`, and it fills in the rest automatically.
-
----
+**Shortcut:** Use `@functools.total_ordering` — define `__eq__` and ONE of `__lt__`/`__gt__`, and it fills in the rest automatically.
 
 ### Arithmetic Methods
+
 ```python
 class Vector:
     def __init__(self, x, y):
@@ -105,9 +102,8 @@ print(3 * v1)     # Vector(6, 9)  ← uses __rmul__
 print(abs(v1))    # 3.605...
 ```
 
----
-
 ### Container Methods
+
 ```python
 class Playlist:
     def __init__(self, name):
@@ -152,9 +148,8 @@ for song in p:           # Iteration works!
     print(song)
 ```
 
----
-
 ### Context Manager Methods
+
 ```python
 class FileManager:
     def __init__(self, filename, mode):
@@ -177,9 +172,8 @@ with FileManager("test.txt", "w") as f:
 # File is automatically closed here, even if an error occurs
 ```
 
----
-
 ### Callable Objects
+
 ```python
 class Multiplier:
     def __init__(self, factor):
@@ -199,7 +193,7 @@ print(callable(double))  # True
 
 ---
 
-## 2. Abstract Base Classes (ABCs)
+## Abstract Base Classes (ABCs)
 
 ABCs let you define **interfaces** — blueprints that force subclasses to implement specific methods.
 
@@ -260,15 +254,16 @@ for shape in shapes:
     print(f"Area: {shape.area():.2f}")
 ```
 
-> **Why use ABCs?** They prevent incomplete implementations. If a subclass forgets to implement `area()`, Python raises a `TypeError` immediately — catching bugs early.
+**Why use ABCs?** They prevent incomplete implementations. If a subclass forgets to implement `area()`, Python raises a `TypeError` immediately — catching bugs early.
 
 ---
 
-## 3. Dataclasses
+## Dataclasses
 
 Dataclasses eliminate boilerplate for classes that primarily **store data**.
 
 ### The Problem They Solve
+
 ```python
 # Without dataclass — lots of repetitive boilerplate
 class Point:
@@ -303,9 +298,8 @@ print(p1 == p2)     # True                          ← __eq__ auto-generated
 print(p1 == p3)     # False
 ```
 
----
-
 ### Advanced Dataclass Features
+
 ```python
 from dataclasses import dataclass, field
 from typing import List
@@ -331,9 +325,8 @@ print(s)                # Student(name='Alice', age=20, grades=[85.0, 92.0, 78.0
 print(s.average())      # 85.0
 ```
 
----
-
 ### Frozen Dataclasses (Immutable)
+
 ```python
 @dataclass(frozen=True)     # Makes instances immutable
 class Coordinate:
@@ -366,7 +359,3 @@ locations = {Coordinate(40.7, -74.0): "New York"}
 | `__eq__` | `obj == other` |
 | `__lt__` | `obj < other` |
 | `__enter__`/`__exit__` | `with obj:` |
-
----
-
-You now have a solid OOP foundation. Ready to move on to **Decorators** — one of Python's most powerful and elegant features?
