@@ -23,4 +23,6 @@ read notes → run examples → fill in exercises → run tests
 ## Chapters
 
 - [OOP — Foundation](ch01_oop/notes_01_foundation.md)
-- [OOP — Advanced](ch01_oop/notes_02_advanced.md)
+- [OOP — Properties](ch01_oop/notes_02_properties.md)
+- [OOP — Advanced](ch01_oop/notes_03_advanced.md)
+- [OOP — Pythonic Way](ch01_oop/notes_04_pythonic.md)
