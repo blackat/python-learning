@@ -425,6 +425,7 @@ dev = [
     { name = "mkdocs-material" },
     { name = "pytest" },
     { name = "ruff" },
+    { name = "watchdog" },
 ]
 
 [package.metadata]
@@ -434,6 +435,7 @@ dev = [
     { name = "mkdocs-material", specifier = ">=9.0" },
     { name = "pytest", specifier = ">=8.0" },
     { name = "ruff", specifier = ">=0.4" },
+    { name = "watchdog", specifier = ">=6.0.0" },
 ]
 
 [[package]]

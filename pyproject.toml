@@ -8,7 +8,6 @@ dependencies = []
 dev = [
     "pytest>=8.0",
     "ruff>=0.4",
-    "mkdocs-material>=9.0",
 ]
 
 [build-system]

@@ -1,5 +1,7 @@
 site_name: Python Learning
 site_url: https://blackat.github.io/python-learning/
+site_author: Shingo Nakamura
+repo_url:
 site_description: My personal Python learning journal — theory, examples, and exercises.
 docs_dir: docs
 exclude_docs: |
@@ -8,6 +10,9 @@ exclude_docs: |
   src/lessons/*/exercises/
   **/__pycache__/
   **/*.pyc
+
+watch:
+  - docs
 
 theme:
   name: material

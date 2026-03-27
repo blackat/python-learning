@@ -1,0 +1,184 @@
+/* ============================================================
+   Brand palette
+   ============================================================ */
+:root {
+  --color-amber:      #E8922A;
+  --color-amber-dim:  #7A4510;
+  --color-green:      #5AAF78;
+  --color-green-dim:  #1a3d28;
+  --color-red:        #C45C5C;
+  --color-red-dim:    #3d1a1a;
+  --color-teal:       #5BA8A0;
+  --color-teal-dim:   #2A5550;
+
+  --color-bg:         #0f1117;
+  --color-bg-raised:  #161b22;
+  --color-bg-surface: #1c2128;
+  --color-fg:         #e6edf3;
+  --color-fg-muted:   #848d97;
+  --color-border:     #30363d;
+}
+
+/* ============================================================
+   Starlight theme overrides — dark
+   ============================================================ */
+:root[data-theme="dark"],
+:root {
+  --sl-color-accent:          var(--color-amber);
+  --sl-color-accent-high:     var(--color-amber);
+  --sl-color-accent-low:      var(--color-amber-dim);
+
+  --sl-color-bg:              var(--color-bg);
+  --sl-color-bg-nav:          var(--color-bg-raised);
+  --sl-color-bg-sidebar:      var(--color-bg-raised);
+  --sl-color-bg-inline-code:  var(--color-bg-surface);
+
+  --sl-color-text:            var(--color-fg);
+  --sl-color-text-accent:     var(--color-amber);
+  --sl-color-gray-1:          var(--color-fg);
+  --sl-color-gray-2:          var(--color-fg-muted);
+  --sl-color-gray-5:          var(--color-border);
+  --sl-color-gray-6:          var(--color-bg-surface);
+  --sl-color-gray-7:          var(--color-bg-raised);
+
+  --sl-color-hairline:        var(--color-border);
+  --sl-color-hairline-light:  var(--color-bg-surface);
+
+  /* Sidebar active item */
+  --sl-color-text-invert:     var(--color-bg);
+}
+
+/* ============================================================
+   Header / navbar
+   ============================================================ */
+header.header {
+  background: var(--color-amber) !important;
+  border-bottom: none;
+}
+
+/* Site title */
+.site-title {
+  color: var(--color-bg) !important;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Nav links in header */
+header a {
+  color: var(--color-bg) !important;
+}
+
+/* ============================================================
+   Sidebar
+   ============================================================ */
+.sidebar-content {
+  background: var(--color-bg-raised);
+}
+
+/* Active sidebar item */
+[aria-current="page"],
+[aria-current="page"]:hover {
+  background: var(--color-amber-dim) !important;
+  color: var(--color-amber) !important;
+  border-color: var(--color-amber) !important;
+}
+
+/* Sidebar group labels */
+.group-label span {
+  color: var(--color-fg-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   Typography
+   ============================================================ */
+.sl-markdown-content h1 {
+  color: var(--color-amber);
+  border-bottom: 1px solid var(--color-amber-dim);
+  padding-bottom: 0.3em;
+}
+
+.sl-markdown-content h2 {
+  color: var(--color-amber);
+  border-bottom: 1px solid var(--color-amber-dim);
+  padding-bottom: 0.2em;
+}
+
+.sl-markdown-content h3 {
+  color: var(--color-amber);
+}
+
+.sl-markdown-content a {
+  color: var(--color-teal);
+}
+
+.sl-markdown-content a:hover {
+  color: var(--color-amber);
+}
+
+/* Inline code */
+.sl-markdown-content :not(pre) > code {
+  background: var(--color-bg-surface);
+  color: var(--color-amber);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.85em;
+}
+
+/* ============================================================
+   Code blocks
+   ============================================================ */
+.expressive-code {
+  margin: 1.5em 0;
+}
+
+.expressive-code .frame {
+  background: #080b0f !important;
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================================
+   Tables
+   ============================================================ */
+.sl-markdown-content table {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.sl-markdown-content th {
+  background: var(--color-bg-surface);
+  color: var(--color-amber);
+  border-bottom: 1px solid var(--color-amber-dim);
+}
+
+.sl-markdown-content tr:hover {
+  background: var(--color-bg-raised);
+}
+
+/* ============================================================
+   Aside / callouts (replaces admonitions)
+   ============================================================ */
+.starlight-aside--note {
+  border-color: var(--color-teal);
+  background: var(--color-teal-dim);
+}
+
+.starlight-aside--tip {
+  border-color: var(--color-amber);
+  background: var(--color-amber-dim);
+}
+
+.starlight-aside--caution {
+  border-color: var(--color-red);
+  background: var(--color-red-dim);
+}
+
+.starlight-aside--danger {
+  border-color: var(--color-red);
+  background: var(--color-red-dim);
+}
