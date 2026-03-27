@@ -6,7 +6,7 @@ hero:
   tagline: Theory notes, runnable examples, and exercises that go from 🔴 to 🟢.
   actions:
     - text: Start with OOP
-      link: /ch01_oop/foundation/
+      link: ./ch01_oop/foundation/
       icon: right-arrow
       variant: primary
 ---
