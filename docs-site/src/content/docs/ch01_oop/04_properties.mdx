@@ -268,7 +268,7 @@ A summary of the `@property` patterns covered in this chapter, when to use each 
 
 ## Exercises
 
-### Exercise 3 — Properties
+### Exercise 2.1 — Properties
 
 Create a `Temperature` class that:
 
@@ -290,9 +290,11 @@ t.celsius = -300        # ValueError: Below absolute zero
 ```
 
 <details class="exercise">
-<summary>**Solution**</summary>
+<summary>Solution</summary>
+
 <div>
-```python title="exercise_02.py"
+
+```python title="exercise_02_01.py"
 class Temperature:
     def __init__(self, celsius: float) -> None:
         self.celsius = celsius  # uses the setter for validation
@@ -328,9 +330,9 @@ class Temperature:
 ```
 
 `_celsius` is the single source of truth — all three properties read from and write to it. The `celsius` setter validates the value before storing it. The `fahrenheit` and `kelvin` setters convert to Celsius and delegate storage to `_celsius` directly — bypassing the setter to avoid double conversion.
-```python title="test_exercise_02.py"
+```python title="test_exercise_02_01.py"
 import pytest
-from exercises.ch01_oop.exercise_02 import Temperature
+from exercises.ch01_oop.exercise_02_01 import Temperature
 
 def test_temperature(capsys):
     t = Temperature(100)

@@ -1,7 +1,7 @@
-from exercises.ch01_oop.exercise_04.full_time_employee import FullTimeEmployee
-from exercises.ch01_oop.exercise_04.manager import Manager
-from exercises.ch01_oop.exercise_04.part_time_employee import PartTimeEmployee
-from exercises.ch01_oop.exercise_04.utils import print_payroll
+from exercises.ch01_oop.exercise_01_02.full_time_employee import FullTimeEmployee
+from exercises.ch01_oop.exercise_01_02.manager import Manager
+from exercises.ch01_oop.exercise_01_02.part_time_employee import PartTimeEmployee
+from exercises.ch01_oop.exercise_01_02.utils import print_payroll
 
 
 def test_utils(capsys):

@@ -118,7 +118,7 @@ A summary of the access control conventions and method types covered in this cha
 
 ## Exercises
 
-### Exercise 2 — Class & instance attributes
+### Exercise 1.4 — Class & instance attributes
 
 Create a `BankAccount` class that:
 
@@ -141,8 +141,10 @@ acc2.withdraw(1000)                  # ValueError: Insufficient funds
 
 <details class="exercise">
 <summary>Solution</summary>
+
 <div>
-```python title="exercise_03.py"
+
+```python title="exercise_01_03.py"
 class BankAccount:
     totalAccounts = 0
 
@@ -174,9 +176,9 @@ class BankAccount:
 ```
 
 `totalAccounts` is a class attribute — it lives on the class, not on any instance, so it counts across all accounts. `get_account_count()` uses `cls` instead of `self` — it works on the class itself, not an instance. `withdraw` validates before modifying — if the check fails, `balance` is never touched.
-```python title="test_exercise_03.py"
+```python title="test_exercise_01_03.py"
 import pytest
-from exercises.ch01_oop.exercise_03 import BankAccount
+from exercises.ch01_oop.exercise_01_03 import BankAccount
 
 def test_balance_account():
     acc1 = BankAccount("Alice", 1000)

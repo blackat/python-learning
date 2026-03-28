@@ -200,6 +200,12 @@ header a {
   background: var(--color-bg-raised);
 }
 
+.sl-markdown-content td:first-child,
+.sl-markdown-content th:first-child {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
 /* ============================================================
    Aside / callouts (replaces admonitions)
    ============================================================ */
@@ -415,6 +421,15 @@ details.exercise {
   padding-left: 0 !important;
 }
 
+details.exercise > div {
+  padding-top: 0 !important;
+}
+
+details.exercise .expressive-code:first-child {
+  margin-top: 0 !important;
+  border-top: 1px solid var(--color-green-dim) !important;
+}
+
 details.exercise summary {
   width: 100% !important;
   box-sizing: border-box !important;
@@ -424,6 +439,7 @@ details.exercise summary {
   list-style: none !important;
   padding: 0.75rem 1.5rem !important;
   color: var(--color-green-light);
+  margin-bottom: 0 !important;
 }
 
 details.exercise > summary::-webkit-details-marker {
@@ -449,6 +465,9 @@ details.exercise[open] summary::before {
 
 details.exercise > div {
   padding: 1rem 0 !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  border-top: none !important;
 }
 
 details.exercise > div {
@@ -458,6 +477,10 @@ details.exercise > div {
 details.exercise .expressive-code {
   margin-inline: 0 !important;
 }
+
+/* ============================================================
+   Badges
+   ============================================================ */
 
 .badge {
   display: inline-block;

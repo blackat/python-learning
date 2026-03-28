@@ -229,7 +229,7 @@ A summary of the inheritance concepts covered in this chapter.
 
 ## Exercises
 
-### Exercise 4 — Inheritance <span class="badge yellow">Intermediate</span>
+### Exercise 1.2 — Inheritance <span class="badge yellow">Intermediate</span>
 
 Model a company's staff. Create:
 
@@ -256,7 +256,7 @@ print_payroll(staff)
 <div>
 
 Since this exercise involves multiple classes, each lives in its own file inside `exercise_04/`.
-```python title="exercise_04/employee.py"
+```python title="exercise_01_02/employee.py"
 class Employee:
     def __init__(self, name: str, salary: float) -> None:
         self.name = name
@@ -268,14 +268,14 @@ class Employee:
     def __str__(self) -> str:
         return f"Employee(name={self.name}, salary={self.salary})"
 ```
-```python title="exercise_04/full_time_employee.py"
-from exercises.ch01_oop.exercise_04.employee import Employee
+```python title="exercise_01_02/full_time_employee.py"
+from exercises.ch01_oop.exercise_01_02.employee import Employee
 
 class FullTimeEmployee(Employee):
     def __str__(self) -> str:
         return f"{self.name} (FullTime) - ${self.salary}"
 ```
-```python title="exercise_04/part_time_employee.py"
+```python title="exercise_01_02/part_time_employee.py"
 from exercises.ch01_oop.exercise_04.employee import Employee
 
 class PartTimeEmployee(Employee):
@@ -285,7 +285,7 @@ class PartTimeEmployee(Employee):
     def __str__(self) -> str:
         return f"{self.name} (PartTime) - ${self.salary}"
 ```
-```python title="exercise_04/manager.py"
+```python title="exercise_01_02/manager.py"
 from exercises.ch01_oop.exercise_04.employee import Employee
 
 class Manager(Employee):
@@ -295,7 +295,7 @@ class Manager(Employee):
     def __str__(self) -> str:
         return f"{self.name} (Manager) - ${self.salary}"
 ```
-```python title="exercise_04/utils.py"
+```python title="exercise_01_02/utils.py"
 from exercises.ch01_oop.exercise_04.employee import Employee
 
 def print_payroll(employees: list[Employee]) -> None:
@@ -304,11 +304,11 @@ def print_payroll(employees: list[Employee]) -> None:
 ```
 
 `FullTimeEmployee` needs no `__init__` — it inherits directly from `Employee` since the salary is already fixed. `PartTimeEmployee` computes the total pay in `__init__` before delegating to `super()` — so `salary` on the instance already holds the final value. `Manager` does the same — it sums the bonuses and adds them to the base salary before calling `super()`. `print_payroll` is a standalone function, not a method — it takes any list of `Employee` objects and lets polymorphism handle the rest.
-```python title="test_exercise_04.py"
-from exercises.ch01_oop.exercise_04.full_time_employee import FullTimeEmployee
-from exercises.ch01_oop.exercise_04.manager import Manager
-from exercises.ch01_oop.exercise_04.part_time_employee import PartTimeEmployee
-from exercises.ch01_oop.exercise_04.utils import print_payroll
+```python title="test_exercise_01_02.py"
+from exercises.ch01_oop.exercise_01_02.full_time_employee import FullTimeEmployee
+from exercises.ch01_oop.exercise_01_02.manager import Manager
+from exercises.ch01_oop.exercise_01_02.part_time_employee import PartTimeEmployee
+from exercises.ch01_oop.exercise_01_02.utils import print_payroll
 
 def test_utils(capsys):
     staff = [
@@ -330,7 +330,7 @@ def test_utils(capsys):
 </div>
 </details>
 
-### Exercise 7 — Mixin classes <span class="badge red">Advanced</span>
+### Exercise 1.3 — Mixin classes <span class="badge red">Advanced</span>
 
 Create a set of **mixin classes** and combine them:
 

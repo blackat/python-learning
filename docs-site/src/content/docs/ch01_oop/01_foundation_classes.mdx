@@ -218,7 +218,7 @@ A summary of the core concepts covered in this chapter.
 | Memory efficiency | `@dataclass(slots=True)` |
 | Only one representation needed | Define `__repr__` — `print()` falls back to it |
 
-## Exercise 1 — Basic class <span class="badge green">Beginner</span>
+## Exercise 1.1 — Basic class <span class="badge green">Beginner</span>
 
 Create a `Rectangle` class that:
 
@@ -264,7 +264,7 @@ class Rectangle:
 
 `area()` and `perimeter()` are straightforward formulas. `is_square()` is a single equality check — width equals height. `__str__` uses an f-string to match the expected format exactly.
 ```python title="test_exercise_01.py"
-from lessons.ch01_oop.exercises.exercise_01 import Rectangle
+from lessons.ch01_oop.exercises.exercise_01_01 import Rectangle
 
 def test_area():
     assert Rectangle(4, 6).area() == 24
