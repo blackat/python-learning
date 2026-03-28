@@ -115,3 +115,81 @@ class Dog(Animal):
 dog = Dog("Rex", 3, "Labrador")
 print(dog.info())   # Rex (Labrador), age 3
 ```
+
+## Multiple Inheritance & MRO
+
+Python allows a class to inherit from **multiple parents** at once. This is powerful but raises an immediate question: if both parents define the same method, which one wins?
+
+Python answers this with the **MRO — Method Resolution Order** — a deterministic lookup chain that defines exactly which class Python searches first when resolving a method call. It is computed using the **C3 linearization** algorithm and always follows a left-to-right, depth-first order that respects the inheritance hierarchy.
+
+In the example below, `D` inherits from both `B` and `C`, which both inherit from `A`. When `d.hello()` is called, Python walks the MRO chain — `D → B → C → A` — and uses the first match it finds:
+
+```bash frame="none"
+d.hello()
+  → check D    — no hello()
+  → check B    — found! returns "Hello from B"  ✓
+```
+
+You can always inspect the chain with `D.__mro__` — a good habit when debugging unexpected method resolution in complex hierarchies.
+
+```python
+class A:
+    def hello(self):
+        return "Hello from A"
+
+class B(A):
+    def hello(self):
+        return "Hello from B"
+
+class C(A):
+    def hello(self):
+        return "Hello from C"
+
+class D(B, C):       # Inherits from both B and C
+    pass
+
+d = D()
+print(d.hello())     # Hello from B
+
+# MRO = Method Resolution Order — the lookup chain
+print(D.__mro__)     # D → B → C → A → object
+```
+Python uses **C3 linearization** to determine which method wins. Always check `__mro__` when using multiple inheritance.
+
+### MRO — Method Resolution Order
+
+Python answers this with the **MRO — Method Resolution Order** — a deterministic lookup chain computed using the **C3 linearization** algorithm. The rules are simple:
+
+- A child is always checked **before** its parents
+- When inheriting from multiple parents, they are checked **left to right** in the order you declare them — `class D(B, C)` means B is checked before C
+- A class is never checked **before** all its subclasses have been checked first
+
+The inheritance tree for this example looks like this:
+
+```bash frame="none"
+        object
+          │
+          A
+         / \
+        B   C
+         \ /
+          D
+```
+
+Python flattens this diamond into a linear lookup chain from bottom to top, left to right:
+
+```bash frame="none"
+D → B → C → A → object
+```
+
+So for `d.hello()`:
+
+```bash frame="none"
+d.hello()
+  → D    no hello() defined
+  → B    found! → "Hello from B"  ✓
+  → C    never reached
+  → A    never reached
+```
+
+This guarantees that the lookup order is always predictable and that no class is ever skipped or visited twice.

@@ -82,7 +82,7 @@ print(dog2.name)      # Buddy            ← unique to dog2
 
 Visually:
 
-```
+```bash frame="none"
 Dog (class)
 │   species = "Canis familiaris"   ← shared
 │
@@ -126,7 +126,7 @@ If you only define one, define `__repr__`, Python falls back to it when `__str__
 
 `__repr__` is a special Python method that defines the **string representation** of an object — what you see when you print or inspect it.
 
-```python
+```python title="Without __repr__"
 rectangles = [Rectangle(4, 5), Rectangle(10, 2), Rectangle(3, 3)]
 print(rectangles)
 
@@ -134,7 +134,9 @@ print(rectangles)
 # Useless — just the memory address.
 # Three objects. No idea what is in them.
 [<Rectangle object at 0x10f3a2b50>, <Rectangle object at 0x10f3a2c60>, <Rectangle object at 0x10f3a2d70>]
+```
 
+```python
 # With `__repr__`:
 class Rectangle:
     def __init__(self, width: float, height: float) -> None:
@@ -144,16 +146,21 @@ class Rectangle:
     def __repr__(self) -> str:
         return f"Rectangle(width={self.width}, height={self.height})"
 
-...
 print(rectangles)
 [Rectangle(width=4, height=5), Rectangle(width=10, height=2), Rectangle(width=3, height=3)]
 ```
 
 #### The convention
 
-`__repr__` should ideally return a string that looks like valid Python code you could paste back into the interpreter to recreate the object:
+`__repr__` should ideally return a string that looks like valid Python code you could paste back into the interpreter to recreate the object.
 
-```python
+Let's use REPL (Read, Evaluate, Print, Loop) to interact with the Python Interpreter and visually see the `__repr__` in action:
+
+```bash title="__repr__ in action"
+# Type python or python3 to start REPL
+$ python
+
+# Interact with the Python interpreter
 >>> r = Rectangle(width=4, height=5)
 >>> r
 Rectangle(width=4, height=5)
