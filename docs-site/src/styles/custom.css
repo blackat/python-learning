@@ -225,6 +225,41 @@ header a {
   color: var(--color-amber-light) !important;
 }
 
+/* tip → tables inside tip asides */
+.starlight-aside--tip .sl-markdown-content table,
+.starlight-aside--tip table {
+  width: 100% !important;
+  min-width: 100% !important;
+  display: table !important;
+  table-layout: fixed !important;
+  border: 1px solid var(--color-amber) !important;
+}
+
+.starlight-aside--tip th {
+  background: #3d2000 !important;
+  color: #ffd49a !important;
+  border-bottom: 1px solid var(--color-amber) !important;
+}
+
+.starlight-aside--tip td {
+  border-bottom: 1px solid var(--color-amber-dim) !important;
+  color: var(--color-fg) !important;
+}
+
+.starlight-aside--tip tr:last-child td {
+  border-bottom: none !important;
+}
+
+.starlight-aside--tip tr:hover td {
+  background: #3d200080 !important;
+}
+
+.starlight-aside--tip th,
+.starlight-aside--tip td {
+  padding: 0.75rem 1rem !important;
+  width: 50%;
+}
+
 /* caution → red */
 .starlight-aside--caution {
   border-color: var(--color-red);

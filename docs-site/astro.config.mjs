@@ -16,7 +16,12 @@ const pythonLearningTheme = {
   tokenColors: [
     // Keywords: class, def, return, import, from, if, for, while, with, as, raise
     {
-      scope: ["keyword", "keyword.control", "keyword.operator.logical", "storage.type"],
+      scope: [
+        "keyword",
+        "keyword.control",
+        "keyword.operator.logical",
+        "storage.type",
+      ],
       settings: { foreground: "#E8922A", fontStyle: "bold" },
     },
     // Built-ins: print, len, range, isinstance, super
@@ -41,7 +46,10 @@ const pythonLearningTheme = {
     },
     // f-string braces and interpolation
     {
-      scope: ["meta.interpolation", "punctuation.definition.template-expression"],
+      scope: [
+        "meta.interpolation",
+        "punctuation.definition.template-expression",
+      ],
       settings: { foreground: "#E8922A" },
     },
     // Numbers
@@ -61,7 +69,10 @@ const pythonLearningTheme = {
     },
     // Self, cls
     {
-      scope: ["variable.language.special.self", "variable.parameter.function.language.special"],
+      scope: [
+        "variable.language.special.self",
+        "variable.parameter.function.language.special",
+      ],
       settings: { foreground: "#E8922A", fontStyle: "italic" },
     },
     // Parameters
@@ -135,7 +146,27 @@ export default defineConfig({
         {
           label: "OOP",
           items: [
-            { label: "Foundation", link: "/ch01_oop/foundation/" },
+            {
+              label: "Foundation",
+              items: [
+                {
+                  label: "Classes & Objects",
+                  link: "/ch01_oop/01_foundation_classes/",
+                },
+                {
+                  label: "Class vs. instance attribute",
+                  link: "/ch01_oop/02_foundation_class_instance_attribute/",
+                },
+                {
+                  label: "Inheritance",
+                  link: "/ch01_oop/03_foundation_inheritance/",
+                },
+                {
+                  label: "Encapsulation",
+                  link: "/ch01_oop/03_foundation_encapsulation/",
+                },
+              ],
+            },
             { label: "Properties", link: "/ch01_oop/properties/" },
             { label: "Advanced", link: "/ch01_oop/advanced/" },
           ],
