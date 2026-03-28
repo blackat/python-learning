@@ -1,6 +1,6 @@
 ---
 title: "Encapsulation: public, protected and private"
-description: Encapsulation
+description: How to control access within that hierarchy
 ---
 
 ```python

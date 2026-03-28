@@ -8,8 +8,10 @@
   --color-green:      #5AAF78;
   --color-green-dim:  #1a3d28;
   --color-red:        #C45C5C;
+  --color-red-light:  #e89898;
   --color-red-dim:    #3d1a1a;
   --color-teal:       #5BA8A0;
+  --color-teal-light: #8fd4cc;
   --color-teal-dim:   #2A5550;
 
   --color-bg:         #0f1117;
@@ -152,7 +154,24 @@ header a {
   background: #080b0f !important;
   border: none !important;
   border-radius: 8px !important;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: none;
+}
+
+/* Tab bar */
+.expressive-code .frame .header {
+  background: var(--sl-color-bg) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+/* Title */
+.expressive-code .frame .header .title {
+  background: var(--sl-color-bg) !important;
+  color: var(--color-amber) !important;
+  border: none !important;
+  border-bottom: 2px solid var(--color-amber) !important;
+  border-radius: 0 !important;
+  padding: 0.4rem 1rem !important;
+  font-weight: bold;
 }
 
 /* ============================================================
@@ -202,18 +221,20 @@ header a {
    ============================================================ */
 
 /* note → teal */
+/* ------------------------------------------------------------ */
 .starlight-aside--note {
   border-color: var(--color-teal);
   background: var(--color-teal-dim);
 }
 .starlight-aside--note .starlight-aside__title {
-  color: var(--color-teal) !important;
+  color: var(--color-teal-light) !important;
 }
 .starlight-aside--note .starlight-aside__icon {
-  color: var(--color-teal) !important;
+  color: var(--color-teal-light) !important;
 }
 
 /* tip → amber */
+/* ------------------------------------------------------------ */
 .starlight-aside--tip {
   border-color: var(--color-amber);
   background: var(--color-amber-dim);
@@ -233,6 +254,7 @@ header a {
   display: table !important;
   table-layout: fixed !important;
   border: 1px solid var(--color-amber) !important;
+  background: #2a1800 !important;
 }
 
 .starlight-aside--tip th {
@@ -251,7 +273,7 @@ header a {
 }
 
 .starlight-aside--tip tr:hover td {
-  background: #3d200080 !important;
+  background: #3d2200 !important;
 }
 
 .starlight-aside--tip th,
@@ -261,6 +283,7 @@ header a {
 }
 
 /* caution → red */
+/* ------------------------------------------------------------ */
 .starlight-aside--caution {
   border-color: var(--color-red);
   background: var(--color-red-dim);
@@ -273,13 +296,27 @@ header a {
 }
 
 /* danger → red */
+/* ------------------------------------------------------------ */
 .starlight-aside--danger {
   border-color: var(--color-red);
   background: var(--color-red-dim);
 }
 .starlight-aside--danger .starlight-aside__title {
-  color: var(--color-red) !important;
+  color: var(--color-red-light) !important;
 }
 .starlight-aside--danger .starlight-aside__icon {
-  color: var(--color-red) !important;
+  color: var(--color-red-light) !important;
+}
+
+/* ============================================================
+   Tabs and tabitem
+   ============================================================ */
+
+[role="tablist"] [role="tab"] {
+  color: var(--color-fg-muted) !important;
+}
+
+[role="tablist"] [role="tab"][aria-selected="true"] {
+  color: var(--color-amber) !important;
+  border-bottom-color: var(--color-amber) !important;
 }

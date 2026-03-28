@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import { pluginFrames } from "@expressive-code/plugin-frames";
 
 const pythonLearningTheme = {
   name: "python-learning",
@@ -118,6 +119,7 @@ export default defineConfig({
       customCss: ["./src/styles/custom.css"],
       expressiveCode: {
         themes: [pythonLearningTheme],
+        plugins: [pluginFrames()],
         styleOverrides: {
           codeBackground: "#080b0f",
           codePaddingBlock: "1rem",
@@ -154,12 +156,8 @@ export default defineConfig({
                   link: "/ch01_oop/01_foundation_classes/",
                 },
                 {
-                  label: "Class vs. instance attribute",
-                  link: "/ch01_oop/02_foundation_class_instance_attribute/",
-                },
-                {
                   label: "Inheritance",
-                  link: "/ch01_oop/03_foundation_inheritance/",
+                  link: "/ch01_oop/02_foundation_inheritance/",
                 },
                 {
                   label: "Encapsulation",

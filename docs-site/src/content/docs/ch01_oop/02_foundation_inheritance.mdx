@@ -1,0 +1,117 @@
+---
+title: "Inheritance"
+description: How classes relate to each other
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+Inheritance lets one class **build on top of another** — reusing its attributes and methods without rewriting them. The class being inherited from is called the **parent** (or base class), and the class that inherits is called the **child** (or subclass).
+
+The core idea is the **is-a** relationship: a `Dog` *is an* `Animal`. A `Manager` *is an* `Employee`. When that relationship holds, inheritance is the right tool.
+
+```
+Animal          ← parent: defines shared behaviour
+├── Dog         ← child: inherits from Animal, adds its own
+└── Cat         ← child: inherits from Animal, adds its own
+```
+
+This gives you two things:
+
+- **Reuse** — the child gets everything the parent has for free
+- **Polymorphism** — you can treat a `Dog` and a `Cat` as `Animal` objects and call `speak()` on both, without caring which one you have
+
+```python
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        raise NotImplementedError("Subclass must implement speak()")
+
+    def eat(self):
+        return f"{self.name} is eating."
+
+
+class Dog(Animal):          # Dog inherits from Animal
+    def speak(self):        # Override parent method
+        return f"{self.name} says Woof!"
+
+
+class Cat(Animal):
+    def speak(self):
+        return f"{self.name} says Meow!"
+
+
+dog = Dog("Rex")
+cat = Cat("Whiskers")
+
+print(dog.speak())   # Rex says Woof!
+print(cat.speak())   # Whiskers says Meow!
+print(dog.eat())     # Rex is eating.  ← inherited from Animal
+
+# Check relationships
+print(isinstance(dog, Dog))     # True
+print(isinstance(dog, Animal))  # True  ← dog IS an Animal
+print(issubclass(Dog, Animal))  # True
+```
+
+:::note[Polymorphism]
+Here's a definition to add right after you mention it:
+
+> **Polymorphism** — from Greek *poly* (many) + *morphe* (form). The ability of different objects to respond to the same method call in their own way. You call `speak()` on any `Animal` and each subclass decides what that means — a `Dog` barks, a `Cat` meows. The caller doesn't need to know which one it has.
+
+Or a more code-grounded version if you prefer:
+
+```python
+# Polymorphism in action — same call, different behaviour
+animals = [Dog("Rex"), Cat("Whiskers"), Dog("Buddy")]
+
+for animal in animals:
+    print(animal.speak())   # each responds in its own way
+# Rex says Woof!
+# Whiskers says Meow!
+# Buddy says Woof!
+```
+
+The power is in the loop — you never check `if isinstance(animal, Dog)`. You just call `speak()` and trust each object to do the right thing.
+:::
+
+---
+
+## `super()` — Calling the Parent
+
+When a child class defines its own `__init__`, it **replaces** the parent's, which means the parent's setup code never runs unless you explicitly call it. That's what `super()` is for.
+
+`super()` gives you a reference to the parent class so you can call its methods from inside the child. The most common use is in `__init__` to run the parent's initializer **first** to set up the **shared attributes**, **then** add the **child-specific ones** on top.
+
+```
+Dog.__init__ runs
+  → super().__init__(name, age)   ← delegates to Animal first
+      → self.name = name          ← Animal sets shared attributes
+      → self.age = age
+  → self.breed = breed            ← Dog adds its own
+```
+
+:::danger[Don't forget `super()`]
+A child class that defines `__init__` without calling `super().__init__()` silently skips the parent's setup — leading to missing attributes and confusing errors that are hard to debug.
+:::
+
+Here is a full inheritance example with `Animal`, `Dog` and `Cat`:
+
+```python title="Inheritance in action"
+class Animal:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+class Dog(Animal):
+    def __init__(self, name, age, breed):
+        super().__init__(name, age)   # Call Animal's __init__
+        self.breed = breed            # Add Dog-specific attribute
+
+    def info(self):
+        return f"{self.name} ({self.breed}), age {self.age}"
+
+dog = Dog("Rex", 3, "Labrador")
+print(dog.info())   # Rex (Labrador), age 3
+```
