@@ -3,6 +3,7 @@
    ============================================================ */
 :root {
   --color-amber:      #E8922A;
+  --color-amber-light:  #ffd49a;
   --color-amber-dim:  #7A4510;
   --color-green:      #5AAF78;
   --color-green-dim:  #1a3d28;
@@ -49,6 +50,14 @@
 }
 
 /* ============================================================
+   Right sidebar
+   ============================================================ */
+:root {
+  --sl-sidebar-width: 20rem;
+  --sl-content-width: 60rem;
+}
+
+/* ============================================================
    Header / navbar
    ============================================================ */
 header.header {
@@ -65,6 +74,11 @@ header.header {
 
 /* Nav links in header */
 header a {
+  color: var(--color-bg) !important;
+}
+
+/* Theme select */
+.astro-4yphtoen {
   color: var(--color-bg) !important;
 }
 
@@ -181,4 +195,56 @@ header a {
 .starlight-aside--danger {
   border-color: var(--color-red);
   background: var(--color-red-dim);
+}
+
+/* ============================================================
+   Admonitions
+   ============================================================ */
+
+/* note → teal */
+.starlight-aside--note {
+  border-color: var(--color-teal);
+  background: var(--color-teal-dim);
+}
+.starlight-aside--note .starlight-aside__title {
+  color: var(--color-teal) !important;
+}
+.starlight-aside--note .starlight-aside__icon {
+  color: var(--color-teal) !important;
+}
+
+/* tip → amber */
+.starlight-aside--tip {
+  border-color: var(--color-amber);
+  background: var(--color-amber-dim);
+}
+.starlight-aside--tip .starlight-aside__title {
+  color: var(--color-amber-light) !important;
+}
+.starlight-aside--tip .starlight-aside__icon {
+  color: var(--color-amber-light) !important;
+}
+
+/* caution → red */
+.starlight-aside--caution {
+  border-color: var(--color-red);
+  background: var(--color-red-dim);
+}
+.starlight-aside--caution .starlight-aside__title {
+  color: var(--color-red) !important;
+}
+.starlight-aside--caution .starlight-aside__icon {
+  color: var(--color-red) !important;
+}
+
+/* danger → red */
+.starlight-aside--danger {
+  border-color: var(--color-red);
+  background: var(--color-red-dim);
+}
+.starlight-aside--danger .starlight-aside__title {
+  color: var(--color-red) !important;
+}
+.starlight-aside--danger .starlight-aside__icon {
+  color: var(--color-red) !important;
 }

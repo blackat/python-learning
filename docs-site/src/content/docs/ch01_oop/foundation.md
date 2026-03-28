@@ -3,8 +3,6 @@ title: OOP — Foundation
 description: Classes, inheritance, encapsulation, class methods, and MRO.
 ---
 
-# Object-Oriented Programming in Python
-
 ## Classes & Objects
 
 A **class** is a blueprint. It describes what an object *is* and what it can *do*. An **instance** is a concrete object created from that blueprint — each one carries its own data but shares the same behaviour.
@@ -34,6 +32,29 @@ class Dog:
 The Python philosophy, don't write boilerplate the language can generate for you.
 
 **dataclasses** eliminate the boilerplate that makes classes feel repetitive:
+
+:::tip[The Pythonic Way]
+When a class primarily stores data, use `@dataclass` — it auto-generates
+`__init__`, `__repr__`, and `__eq__` for you.
+```python
+from dataclasses import dataclass
+
+@dataclass
+class Dog:
+    name: str
+    age: int
+    species: str = "Canis familiaris"  # default value
+
+# Identical behaviour to the full class above
+dog1 = Dog("Rex", 3)
+dog2 = Dog("Buddy", 5)
+
+print(dog1)          # Dog(name='Rex', age=3, species='Canis familiaris')
+print(dog1 == dog2)  # False — __eq__ auto-generated
+```
+
+Use a plain `class` when you need custom logic, validation, or `@property`.
+:::
 
 ```python
 # ❌ Un-pythonic — lots of ceremony
