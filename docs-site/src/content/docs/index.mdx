@@ -1,0 +1,49 @@
+---
+title: learn.py
+description: A structured, test-driven approach to learning Python.
+template: splash
+hero:
+  tagline: Read it. Run it. Break it. Fix it.
+  actions:
+    - text: Start learning
+      link: ./ch01_oop/01_foundation_classes/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/<your-username>/python-learning
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## The method
+
+Every chapter follows the same battle-tested loop:
+
+<CardGrid>
+  <Card title="Read" icon="open-book">
+    Theory explained in plain English — no jargon, no hand-waving. Concepts you actually understand, not just memorize.
+  </Card>
+  <Card title="Run" icon="rocket">
+    Every concept has a runnable example. See it in action before you write a single line yourself.
+  </Card>
+  <Card title="Practice" icon="pencil">
+    Exercises with real constraints. Fill in the stubs, make the tests green.
+  </Card>
+  <Card title="Verify" icon="approve-check">
+    Tests prove your solution is correct — not just "looks right". Red to green, that's the goal.
+  </Card>
+</CardGrid>
+
+## Chapters
+
+<CardGrid>
+  <Card title="01 — Object Oriented Programming" icon="puzzle">
+    Classes, inheritance, encapsulation, properties, magic methods, ABCs and dataclasses.
+    [Start →](./ch01_oop/foundation/)
+  </Card>
+  <Card title="02 — Coming soon" icon="add-document">
+    More chapters on their way.
+  </Card>
+</CardGrid>

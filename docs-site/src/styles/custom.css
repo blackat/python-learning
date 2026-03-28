@@ -2,21 +2,30 @@
    Brand palette
    ============================================================ */
 :root {
-  --color-amber:      #E8922A;
+  --color-amber:        #E8922A;
   --color-amber-light:  #ffd49a;
-  --color-amber-dim:  #7A4510;
-  --color-green:      #5AAF78;
-  --color-green-dim:  #1a3d28;
-  --color-green-light:#85e5a6;
-  --color-red:        #C45C5C;
-  --color-red-light:  #e89898;
-  --color-red-dim:    #3d1a1a;
-  --color-teal:       #5BA8A0;
-  --color-teal-light: #8fd4cc;
-  --color-teal-dim:   #2A5550;
-  --color-purple:     #8B6FC0;
-  --color-purple-dim: #2A1F40;
+  --color-amber-dim:    #7A4510;
+  --color-amber-dark: #2d1a08;
+  --color-green:        #5AAF78;
+  --color-green-dim:    #1a3d28;
+  --color-green-dark: #0d2b1a;
+  --color-green-light:  #85e5a6;
+  --color-red:          #C45C5C;
+  --color-red-light:    #e89898;
+  --color-red-dim:      #3d1a1a;
+  --color-red-dark:     #1a0808;
+  --color-teal:         #5BA8A0;
+  --color-teal-light:   #8fd4cc;
+  --color-teal-dim:     #2A5550;
+  --color-teal-dark:    #0d2020;
+  --color-purple:       #8B6FC0;
+  --color-purple-dim:   #2A1F40;
   --color-purple-light: #c7b0f2;
+  --color-purple-dark:  #0d0a1a;
+  --color-yellow:       #E8C42A;
+  --color-yellow-light: #f5e08a;
+  --color-yellow-dim:   #3d3400;
+  --color-yellow-dark:  #1a1600;
 
   --color-bg:         #0f1117;
   --color-bg-raised:  #161b22;
@@ -126,6 +135,10 @@ header a {
   padding-bottom: 0.2em;
 }
 
+.sl-heading-wrapper.level-h2 {
+  margin-bottom: 1.8rem !important;
+}
+
 .sl-markdown-content h3 {
   color: var(--color-amber);
 }
@@ -216,7 +229,7 @@ header a {
 
 .starlight-aside--tip {
   border-color: var(--color-amber);
-  background: var(--color-amber-dim);
+  background: var(--color-amber-dark) !important;
 }
 
 .starlight-aside--caution {
@@ -237,7 +250,7 @@ header a {
 /* ------------------------------------------------------------ */
 .starlight-aside--note {
   border-color: var(--color-teal);
-  background: var(--color-teal-dim);
+  background: var(--color-teal-dark);
 }
 .starlight-aside--note .starlight-aside__title {
   color: var(--color-teal-light) !important;
@@ -298,21 +311,21 @@ header a {
 /* caution → red */
 /* ------------------------------------------------------------ */
 .starlight-aside--caution {
-  border-color: var(--color-red);
-  background: var(--color-red-dim);
+  border-color: var(--color-yellow);
+  background: var(--color-yellow-dark);
 }
 .starlight-aside--caution .starlight-aside__title {
-  color: var(--color-red) !important;
+  color: var(--color-yellow) !important;
 }
 .starlight-aside--caution .starlight-aside__icon {
-  color: var(--color-red) !important;
+  color: var(--color-yellow) !important;
 }
 
 /* danger → red */
 /* ------------------------------------------------------------ */
 .starlight-aside--danger {
   border-color: var(--color-red);
-  background: var(--color-red-dim);
+  background: var(--color-red-dark);
 }
 .starlight-aside--danger .starlight-aside__title {
   color: var(--color-red-light) !important;
@@ -363,7 +376,7 @@ header a {
 
 details.deeper {
   border: 1px solid var(--color-purple-light) !important;
-  background: var(--color-purple-dim) !important;
+  background: var(--color-purple-dark) !important;
   padding-left: 0 !important;
 }
 
@@ -417,7 +430,7 @@ details.deeper .expressive-code {
 
 details.exercise {
   border: 1px solid var(--color-green) !important;
-  background: var(--color-green-dim) !important;
+  background: var(--color-green-dark) !important;
   padding-left: 0 !important;
 }
 
