@@ -1,13 +1,15 @@
 ---
-title: OOP — Properties
+title: Properties
 description: "@property, getters, setters, validation, and the _name convention."
 ---
 
-# Smart Attributes
-
 ## `@property`
 
-```python
+A plain attribute gives anyone direct access to read or write a value, no questions asked. `@property` lets you intercept that access and add logic in between: validate a value before storing it, compute it on the fly instead of storing it at all, or make it read-only by defining a getter but no setter.
+
+From the outside the attribute looks and feels exactly the same, `c.radius` not `c.get_radius()`. The caller never knows there's logic running underneath. That's the point: the interface stays clean while the implementation gains control.
+
+```python {25}
 class Circle:
     def __init__(self, radius):
         self._radius = radius
@@ -32,54 +34,46 @@ c = Circle(5)
 print(c.radius)    # 5       ← calls getter
 print(c.area)      # 78.53   ← computed on the fly
 c.radius = 10      # calls setter
-# c.radius = -1    # ❌ ValueError
+# c.radius = -1    # ValueError: Radius cannot be negative
 ```
 
-### Important
-
-`self._celsius` and `self_celsius` are the same thing. Here is why:
-
-When you call `print(t.celsius)` Python runs the **getter**:
-
-```python
-@property
-def celsius(self) -> float:
-    return self._celsius  # ← reads from _celsius
-```
-
-So `t.celsius` and `t._celsius` **always return the same value**. The property `celsius` is just a clean public interface that reads from `_celsius` under the hood.
-
-Think of it like this:
-
+:::note[`celsius` vs `_celsius`]
+`t.celsius` and `t._celsius` always return the same value — `celsius` is just a clean public interface that reads from `_celsius` under the hood.
 ```python
 t.celsius       → triggers the getter → returns self._celsius
 t._celsius      → direct access to the private attribute
 ```
 
-Both give you the same number. The difference is:
-
 - `t.celsius` — the **public door** — goes through the getter, which could have logic in it
 - `t._celsius` — the **back door** — bypasses the getter, direct access
 
-### Deeper
+:::
+
+<details class="deeper">
+<summary>**Under the hood: a concrete mental model**</summary>
+
+<div>
 
 Let me walk through it step by step with a concrete mental model.
 
 **Think of `_celsius` as a box and `celsius` as the window to that box**
 
-```bash
+```bash frame="none"
 ┌─────────────────────────────┐
 │   Temperature object        │
 │                             │
-│   _celsius = 100.0  ← box  │
+│   _celsius = 100.0  ← box   │
 │                             │
-│   celsius  ← window to box │
+│   celsius  ← window to box  │
 └─────────────────────────────┘
 ```
 
-`_celsius` is where the value physically lives in memory. `celsius` is the property — a controlled way to read from and write to that box.
+`_celsius`  is
 
-#### Three different ways to interact with the value
+- where the value physically lives in memory
+- the property, a controlled way to read from and write to that box.
+
+##### Three different ways to interact with the value
 
 ```python
 t = Temperature(100)
@@ -101,7 +95,7 @@ print(t._celsius)
 
 All three see the same number. The difference is what happens in between.
 
-#### Why not just use `celsius` everywhere and forget `_celsius`?
+##### Why not just use `celsius` everywhere and forget `_celsius`?
 
 Because if you tried to store to `celsius` inside the class itself:
 
@@ -113,7 +107,7 @@ def celsius(self, value):
 
 Python sees `self.celsius = value` and thinks — "celsius has a setter, let me call it." Which calls the setter. Which calls `self.celsius = value` again. Which calls the setter again. Forever.
 
-```bash
+```bash frame="none"
 setter called
   → self.celsius = value
       → setter called
@@ -125,7 +119,7 @@ setter called
 
 `self._celsius = value` breaks the loop because `_celsius` has no setter — it is just a plain attribute. Python stores the value directly without triggering anything.
 
-#### The naming convention visualised
+##### The naming convention visualised
 
 ```python
 class Temperature:
@@ -157,11 +151,12 @@ t.celsius                       calls getter ✓
   → returns 100
 ```
 
-### The rule in one sentence
+##### The rule in one sentence
 
 Inside the class, always read and write `_celsius` directly. Outside the class, always use `celsius`. The property bridges the two — it is the translation layer between the outside world and the internal storage.
 
----
+</div>
+</details>
 
 ## Getter and Setter, the Python way
 

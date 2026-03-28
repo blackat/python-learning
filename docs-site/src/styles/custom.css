@@ -13,6 +13,9 @@
   --color-teal:       #5BA8A0;
   --color-teal-light: #8fd4cc;
   --color-teal-dim:   #2A5550;
+  --color-purple:     #8B6FC0;
+  --color-purple-dim: #2A1F40;
+  --color-purple-light: #b49ce2;
 
   --color-bg:         #0f1117;
   --color-bg-raised:  #161b22;
@@ -344,4 +347,58 @@ header a {
 .sl-markdown-content a[href*="pythontutor.com"]:hover {
   background: var(--color-amber);
   color: var(--color-bg) !important;
+  padding-left: 0 !important;
+}
+
+/* ============================================================
+   Under the hood block
+   ============================================================ */
+
+details.deeper {
+  border: 1px solid var(--color-purple-light) !important;
+  background: var(--color-purple-dim) !important;
+  padding-left: 0 !important;
+}
+
+details.deeper summary {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  list-style: none !important;
+  padding: 0.75rem 1.5rem !important;
+}
+
+details.deeper > summary::-webkit-details-marker {
+  display: none !important;
+}
+
+details.deeper > summary::marker {
+  display: none !important;
+  content: "" !important;
+}
+
+details.deeper summary::before {
+  content: "›" !important;
+  color: var(--color-purple) !important;
+  font-size: 1.2rem !important;
+  transition: transform 0.2s !important;
+  margin-left: 0.5rem !important;
+}
+
+details.deeper[open] summary::before {
+  transform: rotate(90deg) !important;
+}
+
+details.deeper > div {
+  padding: 1rem 0 !important;
+}
+
+details.deeper > div {
+  padding: 1rem 1.5rem !important;
+}
+
+details.deeper .expressive-code {
+  margin-inline: 0 !important;
 }
