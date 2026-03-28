@@ -452,3 +452,110 @@ A summary of all the dunders covered in this chapter — use this as a cheat she
 | `__eq__` | `obj == other` |
 | `__lt__` | `obj < other` |
 | `__enter__`/`__exit__` | `with obj:` |
+
+---
+
+## Exercises
+
+### Exercise 5 — Magic methods <span class="badge yellow">Intermediate</span>
+
+Create a `Vector2D` class that supports:
+
+- `__add__`, `__sub__`, `__mul__` (scalar), `__rmul__`
+- `__neg__`, `__abs__` (magnitude)
+- `__eq__` and `__lt__` (compare by magnitude)
+- `__iter__` (so you can unpack: `x, y = vector`)
+- `__repr__` and `__str__`
+- A `normalize()` method returning a unit vector
+```python title="Expected output"
+v1 = Vector2D(3, 4)
+v2 = Vector2D(1, 2)
+
+print(v1 + v2)          # Vector2D(4, 6)
+print(v1 - v2)          # Vector2D(2, 2)
+print(v1 * 3)           # Vector2D(9, 12)
+print(3 * v1)           # Vector2D(9, 12)
+print(abs(v1))          # 5.0
+print(v1 > v2)          # True
+x, y = v1               # Unpacking
+print(x, y)             # 3 4
+print(v1.normalize())   # Vector2D(0.6, 0.8)
+```
+
+<details class="exercise">
+<summary>Solution</summary>
+<div>
+
+{/* TODO: add solution and tests */}
+
+</div>
+</details>
+
+---
+
+### Exercise 6 — Abstract Base Classes <span class="badge yellow">Intermediate</span>
+
+Design a **payment system**. Create:
+
+- Abstract base class `PaymentMethod` with abstract methods `pay(amount)` and `refund(amount)`, and abstract property `name`
+- `CreditCard(PaymentMethod)` — tracks spending limit and current balance
+- `PayPal(PaymentMethod)` — tracks email and balance
+- `CryptoCurrency(PaymentMethod)` — tracks coin type, amount, and exchange rate to USD
+- A `checkout(cart_total, payment)` function that uses any payment method
+```python title="Expected output"
+card   = CreditCard("Alice", limit=1000, balance=800)
+paypal = PayPal("alice@example.com", balance=500)
+crypto = CryptoCurrency("BTC", amount=0.01, rate=45000)
+
+checkout(200, card)     # Paid $200 via Credit Card. Remaining limit: $600
+checkout(150, paypal)   # Paid $150 via PayPal. Remaining balance: $350
+checkout(100, crypto)   # Paid $100 via BTC (0.00222 BTC). Remaining: 0.00778 BTC
+```
+
+<details class="exercise">
+<summary>Solution</summary>
+<div>
+
+{/* TODO: add solution and tests */}
+
+</div>
+</details>
+
+### Exercise 8 — Context manager
+
+Build a `DatabaseConnection` class that acts as a context manager:
+
+- `__init__` takes a connection string
+- `__enter__` simulates connecting and returns itself
+- `__exit__` simulates disconnecting, and **rolls back** if an exception occurred
+- Has `execute(query)` method that logs all queries
+- Has `commit()` method
+- Raises `RuntimeError` if you call `execute()` outside a `with` block
+- Tracks total queries executed as a class attribute
+
+```python title="Expected output"
+with DatabaseConnection("postgresql://localhost/mydb") as db:
+    db.execute("SELECT * FROM users")
+    db.execute("INSERT INTO users VALUES ('Alice')")
+    db.commit()
+# Connecting to postgresql://localhost/mydb
+# Query executed: SELECT * FROM users
+# Query executed: INSERT INTO users VALUES ('Alice')
+# Committed 2 queries
+# Disconnecting cleanly
+
+# On exception → rolls back instead of committing
+with DatabaseConnection("postgresql://localhost/mydb") as db:
+    db.execute("DELETE FROM users")
+    raise RuntimeError("Something went wrong")
+# Rolling back 1 queries
+```
+
+<details class="exercise">
+<summary>Solution</summary>
+<div>
+
+{/* TODO: add solution and tests */}
+
+</div>
+</details>

@@ -458,3 +458,33 @@ details.exercise > div {
 details.exercise .expressive-code {
   margin-inline: 0 !important;
 }
+
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: 5px;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge.green {
+  background: #0d2b1a;
+  color: white;
+  border: 1px solid #4ade80;
+}
+
+.badge.yellow {
+  background: #2b2200;
+  color: white;
+  border: 1px solid #facc15;
+}
+
+.badge.red {
+  background: #2b0d0d;
+  color: white;
+  border: 1px solid #f87171;
+}

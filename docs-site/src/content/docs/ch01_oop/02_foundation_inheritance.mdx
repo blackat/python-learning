@@ -229,7 +229,7 @@ A summary of the inheritance concepts covered in this chapter.
 
 ## Exercises
 
-### Exercise 4 — Inheritance
+### Exercise 4 — Inheritance <span class="badge yellow">Intermediate</span>
 
 Model a company's staff. Create:
 
@@ -326,6 +326,35 @@ def test_utils(capsys):
         "Carol (Manager) - $7800\n"
     )
 ```
+
+</div>
+</details>
+
+### Exercise 7 — Mixin classes <span class="badge red">Advanced</span>
+
+Create a set of **mixin classes** and combine them:
+
+- `SerializeMixin` — adds `to_dict()` and `to_json()` methods
+- `ValidateMixin` — adds `validate()` that checks all required fields are non-empty
+- `TimestampMixin` — adds `created_at` and `updated_at`, and an `update()` method that refreshes `updated_at`
+- `ReprMixin` — auto-generates `__repr__` from instance `__dict__`
+- A `User` class that inherits all four mixins
+```python title="Expected output"
+u = User(name="Alice", email="alice@example.com", age=30)
+print(u.validate())         # True
+print(u.to_dict())          # {'name': 'Alice', 'email': '...', 'age': 30}
+print(u.to_json())          # '{"name": "Alice", ...}'
+print(u.created_at)         # 2026-03-22 ...
+u.update(email="new@x.com")
+print(u.updated_at)         # Updated timestamp
+print(repr(u))              # User(name=Alice, email=new@x.com, age=30)
+```
+
+<details class="exercise">
+<summary>Solution</summary>
+<div>
+
+{/* TODO: add solution and tests */}
 
 </div>
 </details>
