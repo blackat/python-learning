@@ -1,6 +1,6 @@
 import pytest
 
-from exercises.ch01_oop.exercise_02 import Temperature
+from exercises.ch01_oop.exercise_02_01 import Temperature
 
 
 def test_temperature(capsys):

@@ -1,4 +1,4 @@
-from exercises.ch01_oop.exercise_04.employee import Employee
+from exercises.ch01_oop.exercise_01_02.employee import Employee
 
 
 class PartTimeEmployee(Employee):

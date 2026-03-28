@@ -1,6 +1,6 @@
 import pytest
 
-from exercises.ch01_oop.exercise_03 import BankAccount
+from exercises.ch01_oop.exercise_01_03 import BankAccount
 
 
 def test_balance_account():
