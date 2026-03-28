@@ -5,11 +5,11 @@ description: Magic/dunder methods, Abstract Base Classes, and Dataclasses.
 
 ## Magic / Dunder Methods
 
-Every Python built-in operation — `print()`, `len()`, `+`, `[]`, `with` — is secretly a method call. When you write `len(playlist)`, Python calls `playlist.__len__()`. When you write `a + b`, Python calls `a.__add__(b)`.
+Every Python built-in operation, `print()`, `len()`, `+`, `[]`, `with`, is secretly a method call. When you write `len(playlist)`, Python calls `playlist.__len__()`. When you write `a + b`, Python calls `a.__add__(b)`.
 
-These are **dunder methods** — named for their **d**ouble **under**score prefix and suffix. By implementing them on your own classes you make your objects speak Python's native language — they stop being custom objects that need special handling and start behaving exactly like built-ins.
+These are **dunder methods**, named for their **d**ouble **under**score prefix and suffix. By implementing them on your own classes you make your objects speak Python's native language. They stop being custom objects that need special handling and start behaving exactly like built-ins.
 
-The name "magic methods" comes from the fact that Python calls them automatically — you never invoke `__len__` directly, you just call `len()` and Python handles the rest.
+The name "magic methods" comes from the fact that Python calls them automatically, you never invoke `__len__` directly, you just call `len()` and Python handles the rest.
 
 ### String Representation
 
@@ -37,7 +37,7 @@ print(repr(b))  # Book('1984', 'Orwell', 328)  ← __repr__
 
 ### Comparison Methods
 
-By default, Python has no idea how to compare two instances of your class — `t1 > t2` will raise a `TypeError`. Implement the comparison dunders and your objects become fully comparable, sortable, and usable in conditions just like numbers or strings.
+By default, Python has no idea how to compare two instances of your class. `t1 > t2` will raise a `TypeError`. Implement the **comparison dunders** and your objects become fully comparable, sortable, and usable in conditions just like numbers or strings.
 
 Each dunder maps directly to an operator:
 
@@ -107,14 +107,14 @@ print(sorted(temps))   # [10°C, 20°C, 30°C]
 ```
 
 :::note[`@functools.total_ordering`]
-The implementation above defines all four methods manually. In practice you only need two — `__eq__` and `__lt__` — and let `@total_ordering` generate the rest.
+The implementation above defines all four methods manually. In practice you only need two: `__eq__` and `__lt__`. Let `@total_ordering` generate the rest.
 :::
 
 ### Arithmetic Methods
 
-Arithmetic dunders let your objects support mathematical operators. Each operator maps to a method — `+` calls `__add__`, `-` calls `__sub__`, `*` calls `__mul__`.
+Arithmetic dunders let your objects support mathematical operators. Each operator maps to a method: `+` calls `__add__`, `-` calls `__sub__`, `*` calls `__mul__`.
 
-One subtlety worth knowing: `v1 * 3` calls `v1.__mul__(3)` — that's straightforward. But `3 * v1` is different — Python calls `(3).__mul__(v1)` first, which fails because integers don't know how to multiply with a `Vector`. Python then tries the **reflected** version: `v1.__rmul__(3)`. Without `__rmul__`, `3 * v1` raises a `TypeError`.
+`Vector` is the classic example: a 2D point in space with `x` and `y` coordinates. Adding two vectors adds their components, subtracting does the opposite, and multiplying by a scalar scales both dimensions.
 
 ```python
 class Vector:
@@ -154,11 +154,39 @@ print(3 * v1)     # Vector(6, 9)  ← uses __rmul__
 print(abs(v1))    # 3.605...
 ```
 
+:::caution[Reflected version]
+One subtlety worth knowing: `v1 * 3` calls `v1.__mul__(3)`, that's straightforward. But `3 * v1` is different, Python calls `(3).__mul__(v1)` first, which fails because integers don't know how to multiply with a `Vector`. Python then tries the **reflected version**: `v1.__rmul__(3)`. Without `__rmul__`, `3 * v1` raises a `TypeError`.
+:::
+
 ### Container Methods
 
-Container dunders make your objects behave like Python's built-in collections — lists, dicts, sets. Implement them and your class supports `len()`, indexing with `[]`, `in` checks, and `for` loops without inheriting from anything.
+**Container dunders** make your objects behave like Python's **built-in collections**: lists, dicts, sets. Implement them and your class supports:
 
-The payoff is that any code expecting a sequence — `sorted()`, `enumerate()`, list comprehensions — will work with your object out of the box. Your `Playlist` becomes a first-class citizen alongside Python's own container types.
+- `len()`
+- indexing with `[]`
+- `in` checks
+- `for` loops without inheriting from anything.
+
+:::note[Container dunders methods]
+
+Container dunders are the methods that make your object behave like a Python collection: a list, dict, or set.
+
+They map to operations you use on built-in containers every day:
+
+| Operation | Dunder | Example |
+|-----------|--------|---------|
+| `len(obj)` | `__len__` | `len(playlist)` |
+| `obj[key]` | `__getitem__` | `playlist[0]` |
+| `obj[key] = val` | `__setitem__` | `playlist[0] = "new"` |
+| `del obj[key]` | `__delitem__` | `del playlist[0]` |
+| `x in obj` | `__contains__` | `"song" in playlist` |
+| `for x in obj` | `__iter__` | `for song in playlist` |
+
+:::
+
+Implement them and your class becomes a **first-class citizen** alongside Python's own container types. Any code that works with lists, `sorted()`, `enumerate()`, list comprehensions, `for` loops will work with your object too, without inheriting from anything.
+
+`Playlist` will support built-in collections operations out of the box.
 
 ```python
 class Playlist:
@@ -206,14 +234,17 @@ for song in p:           # Iteration works!
 
 ### Context Manager Methods
 
+The `with` statement is Python's way of saying: *"set something up, do some work, then tear it down, no matter what happens".* File handles, database connections, network sockets, locks, anything that needs guaranteed cleanup is a good candidate for a context manager. For instance, a file is guaranteed to close even if an exception is raised inside the block, **no explicit `try/finally` needed**:
+
 ```python
 with open("file.txt") as f:
     data = f.read()
 ```
 
-The `with` statement is Python's way of saying "set something up, do some work, then tear it down — no matter what happens." File handles, database connections, network sockets, locks, anything that needs guaranteed cleanup is a good candidate for a context manager. The file is guaranteed to close even if an exception is raised inside the block, **no explicit `try/finally` needed**.
+Any object can support this protocol by implementing two dunders:
 
-Any object can support this protocol by implementing two dunders: `__enter__` runs when execution enters the `with` block and returns the object bound to `as`. `__exit__` runs when execution leaves, whether normally or because an exception was raised.
+- `__enter__` runs when execution enters the `with` block and returns the object bound to `as`
+- `__exit__` runs when execution leaves, whether normally or because an exception was raised.
 
 ```python
 class FileManager:
@@ -239,9 +270,11 @@ with FileManager("test.txt", "w") as f:
 
 ### Callable Objects
 
-In Python, functions are objects. But the reverse is also possible — objects can behave like functions. Implement `__call__` and your object becomes callable: you can invoke it with `()` just like a function.
+In Python, **functions are objects**. But the reverse is also possible: **<mark>objects can behave like functions</mark>**. Implement `__call__` and **your object becomes callable**: you can invoke it with `()` just like a function.
 
-This is useful when you need a callable that also carries state — something a plain function can't do. A `Multiplier` that remembers its factor, a rate limiter that tracks call history, a validator that holds its rules — all are cleaner as callable objects than as functions with global state or closures.
+:::note[When to use it]
+This is useful when you need a callable that also carries state, something a plain function can't do. A `Multiplier` that remembers its factor, a rate limiter that tracks call history, a validator that holds its rules. All are cleaner as callable objects than as functions with global state or closures.
+:::
 
 ```python
 class Multiplier:
@@ -264,11 +297,11 @@ print(callable(double))  # True
 
 ## Abstract Base Classes (ABCs)
 
-Inheritance lets subclasses reuse code. But what if you want to **enforce a contract** — guarantee that every subclass implements specific methods, rather than just hoping they do?
+Inheritance lets subclasses reuse code. But what if you want to **<mark>enforce a contract</mark>**, guarantee that every subclass implements specific methods, rather than just hoping they do?
 
-That's what Abstract Base Classes are for. An ABC defines the **interface** — the methods every subclass must implement — without providing the implementation itself. If a subclass forgets to implement a required method, Python raises a `TypeError` the moment you try to instantiate it, not later when you call the missing method.
+That's what Abstract Base Classes are for. An ABC defines the **interface**: the methods every subclass must implement without providing the implementation itself. If a subclass forgets to implement a required method, Python raises a `TypeError` the moment you try to instantiate it, not later when you call the missing method.
 
-This catches bugs early and makes your intent explicit: `Shape` is not meant to be used directly — it's a blueprint that `Circle`, `Rectangle`, and any future shape must follow.
+This catches bugs early and makes your intent explicit: `Shape` is not meant to be used directly, it's a blueprint that `Circle`, `Rectangle` and any future shape must follow.
 
 ```bash frame="none"
 Shape (ABC — blueprint, cannot be instantiated)
@@ -339,11 +372,11 @@ They prevent incomplete implementations. If a subclass forgets to implement `are
 
 ## Dataclasses
 
-Dataclasses eliminate boilerplate for classes that primarily **store data**.
+Dataclasses eliminate boilerplate for classes that primarily **<mark>store data</mark>**.
 
-Every data class you write without `@dataclass` follows the same tedious pattern: write `__init__` to store the attributes, write `__repr__` so it prints nicely, write `__eq__` so equality comparison works. The logic is always the same — only the field names change.
+Every data class you write without `@dataclass` follows the same tedious pattern: write `__init__` to store the attributes, write `__repr__` so it prints nicely, write `__eq__` so equality comparison works. The logic is always the same, only the field names change.
 
-`@dataclass` is Python's answer to this boilerplate. You declare the fields with type hints and Python generates `__init__`, `__repr__`, and `__eq__` automatically. The class stays focused on what it *is*, not on the ceremony of setting it up.
+`@dataclass` is Python's answer to this boilerplate. You declare the fields **with type hints** and Python generates `__init__`, `__repr__`, and `__eq__` automatically. The class stays focused on what it *is*, not on the ceremony of setting it up.
 
 Then use tabs for the before/after:
 
@@ -383,11 +416,11 @@ Same result, a third of the code.
 
 ### Advanced Dataclass Features
 
-The basic `@dataclass` covers most cases, but three advanced features are worth knowing:
+The basic `@dataclass` covers most cases, but **three advanced features** are worth knowing:
 
-- **`field(default_factory=list)`** — mutable defaults like lists and dicts must use `field(default_factory=...)` instead of a direct assignment. If you write `grades: list = []`, all instances share the same list — a classic Python gotcha.
-- **`field(init=False, repr=False)`** — excludes a field from `__init__` and `__repr__`. Useful for auto-generated values like IDs that the caller should never set directly.
-- **`__post_init__`** — runs automatically after `__init__`. Use it for validation or any setup that depends on the fields already being set.
+- **`field(default_factory=list)`**: mutable defaults like lists and dicts must use `field(default_factory=...)` instead of a direct assignment. If you write `grades: list = []`, all instances share the same list, **a classic Python gotcha**.
+- **`field(init=False, repr=False)`**: excludes a field from `__init__` and `__repr__`. Useful for auto-generated values like IDs that the caller should never set directly.
+- **`__post_init__`**: runs automatically after `__init__`. Use it for validation or any setup that depends on the fields already being set.
 
 ```python
 from dataclasses import dataclass, field
@@ -414,11 +447,83 @@ print(s)                # Student(name='Alice', age=20, grades=[85.0, 92.0, 78.0
 print(s.average())      # 85.0
 ```
 
+<details class="deeper">
+<summary>Under the hood: field(default_factory=list)</summary>
+
+<div>
+
+In Python, **<mark>default values</mark>** in a class definition are created **once** when the class is defined, not each time you create an instance. So if you write:
+
+```python
+@dataclass
+class Student:
+    grades: list = []   # ❌ WRONG
+```
+
+Every `Student` shares the **<mark>exact same list object in memory</mark>**. Add a grade to one student and it appears on all of them:
+
+```python
+s1 = Student()
+s2 = Student()
+
+s1.grades.append(90)
+print(s2.grades)   # [90]  ← s2 is contaminated!
+```
+
+`field(default_factory=list)` fixes this by calling `list()` **fresh for each new instance**:
+
+```python
+@dataclass
+class Student:
+    grades: list = field(default_factory=list)   # ✅ correct
+```
+
+Now every student gets their own independent list:
+
+```python
+s1 = Student()
+s2 = Student()
+
+s1.grades.append(90)
+print(s2.grades)   # []  ← untouched
+```
+
+The same applies to any mutable default: dicts, sets, or custom objects. Immutable defaults like `int`, `str`, `float`, and `bool` are safe to use directly because they can't be modified in place.
+
+</div>
+</details>
+
+:::note[Mutable vs. immutable]
+A **mutable** object is one that can be changed after creation. A **immutable** object cannot.
+
+| Mutable | Immutable |
+|---------|-----------|
+| `list` | `int` |
+| `dict` | `str` |
+| `set` | `float` |
+| custom objects | `bool` |
+| | `tuple` |
+
+The problem with mutable defaults is precisely that they *can* be changed — so when two instances share the same default object, a change made through one instance is visible through the other.
+
+Immutable defaults are safe because there's no way to modify them in place — `str` and `int` can't be mutated, so sharing them between instances is harmless.
+
+```python
+@dataclass
+class Example:
+    count: int = 0        # ✅ safe — int is immutable
+    name: str = "Alice"   # ✅ safe — str is immutable
+    tags: list = field(default_factory=list)   # ✅ safe — fresh list each time
+    tags: list = []       # ❌ danger — shared list
+```
+
+:::
+
 ### Frozen Dataclasses (Immutable)
 
-By default, dataclass instances are mutable — anyone can change `p.x = 999` after creation. Add `frozen=True` and Python makes the instance immutable: any attempt to modify a field after creation raises a `FrozenInstanceError`.
+By default, dataclass instances are mutable, anyone can change `p.x = 999` **<mark>after creation</mark>**. Add `frozen=True` and Python makes the instance immutable: any attempt to modify a field after creation raises a `FrozenInstanceError`.
 
-Frozen dataclasses gain one important property as a side effect — they become **hashable**. Regular mutable objects can't be used as dict keys or added to sets because their hash could change if their data changes. A frozen dataclass has a fixed hash, so it works anywhere a hashable object is expected.
+Frozen dataclasses gain one important property as a side effect, **<mark>they become hashable</mark>**. Regular mutable objects can't be used as dict keys or added to sets because their hash could change if their data changes. **A frozen dataclass has a fixed hash**, so it works anywhere a hashable object is expected.
 
 ```python
 @dataclass(frozen=True)     # Makes instances immutable
@@ -457,7 +562,7 @@ A summary of all the dunders covered in this chapter — use this as a cheat she
 
 ## Exercises
 
-### Exercise 5 — Magic methods <span class="badge yellow">Intermediate</span>
+### Exercise 4.1 — Magic methods <span class="badge yellow">Intermediate</span>
 
 Create a `Vector2D` class that supports:
 
@@ -493,7 +598,7 @@ print(v1.normalize())   # Vector2D(0.6, 0.8)
 
 ---
 
-### Exercise 6 — Abstract Base Classes <span class="badge yellow">Intermediate</span>
+### Exercise 4.2 — Abstract Base Classes <span class="badge yellow">Intermediate</span>
 
 Design a **payment system**. Create:
 
@@ -502,6 +607,7 @@ Design a **payment system**. Create:
 - `PayPal(PaymentMethod)` — tracks email and balance
 - `CryptoCurrency(PaymentMethod)` — tracks coin type, amount, and exchange rate to USD
 - A `checkout(cart_total, payment)` function that uses any payment method
+
 ```python title="Expected output"
 card   = CreditCard("Alice", limit=1000, balance=800)
 paypal = PayPal("alice@example.com", balance=500)
@@ -521,7 +627,7 @@ checkout(100, crypto)   # Paid $100 via BTC (0.00222 BTC). Remaining: 0.00778 BT
 </div>
 </details>
 
-### Exercise 8 — Context manager
+### Exercise 4.3 — Context manager
 
 Build a `DatabaseConnection` class that acts as a context manager:
 

@@ -5,10 +5,10 @@
   --color-amber:        #E8922A;
   --color-amber-light:  #ffd49a;
   --color-amber-dim:    #7A4510;
-  --color-amber-dark: #2d1a08;
+  --color-amber-dark:   #2d1a08;
   --color-green:        #5AAF78;
   --color-green-dim:    #1a3d28;
-  --color-green-dark: #0d2b1a;
+  --color-green-dark:   #091e12;
   --color-green-light:  #85e5a6;
   --color-red:          #C45C5C;
   --color-red-light:    #e89898;
@@ -523,4 +523,15 @@ details.exercise .expressive-code {
   background: #2b0d0d;
   color: white;
   border: 1px solid #f87171;
+}
+
+/* ============================================================
+   Mark text
+   ============================================================ */
+
+mark {
+  background: none;
+  color: var(--color-amber);
+  padding: 0 0;
+  border-radius: 0;
 }

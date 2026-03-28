@@ -167,7 +167,7 @@ export default defineConfig({
             },
             { label: "Properties", link: "/ch01_oop/04_properties/" },
             { label: "Advanced", link: "/ch01_oop/05_advanced/" },
-            { label: "Pythonic way", link: "/ch01_oop/06_pythonic/" },
+            { label: "Pythonic", link: "/ch01_oop/06_pythonic/" },
             { label: "Exercises", link: "/ch01_oop/exercises/" },
           ],
         },
