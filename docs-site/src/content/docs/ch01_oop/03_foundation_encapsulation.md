@@ -176,6 +176,7 @@ class BankAccount:
 ```
 
 `totalAccounts` is a class attribute — it lives on the class, not on any instance, so it counts across all accounts. `get_account_count()` uses `cls` instead of `self` — it works on the class itself, not an instance. `withdraw` validates before modifying — if the check fails, `balance` is never touched.
+
 ```python title="test_exercise_01_03.py"
 import pytest
 from exercises.ch01_oop.exercise_01_03 import BankAccount
