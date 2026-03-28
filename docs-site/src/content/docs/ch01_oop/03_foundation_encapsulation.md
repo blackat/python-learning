@@ -84,3 +84,34 @@ e2 = Employee.from_string("Bob,60000")   # Alternative constructor
 print(Employee.get_count())              # Total employees: 2
 print(Employee.is_valid_salary(50000))   # True
 ```
+
+## Quick reference
+
+A summary of the access control conventions and method types covered in this chapter.
+
+### Access levels
+
+| Convention | Syntax | Accessible from | Meaning |
+|------------|--------|-----------------|---------|
+| Public | `self.name` | Anywhere | No restrictions |
+| Protected | `self._name` | Class and subclasses | Convention — don't touch outside |
+| Private | `self.__name` | Class only | Name-mangled by Python |
+
+### Method types
+
+| Decorator | First argument | Has access to | Use for |
+|-----------|---------------|---------------|---------|
+| none | `self` | Instance + class | Regular behaviour |
+| `@classmethod` | `cls` | Class only | Alternative constructors, class-level state |
+| `@staticmethod` | none | Neither | Utility functions that belong logically |
+
+### When to use what
+
+| Situation | Use |
+|-----------|-----|
+| Regular behaviour on an instance | Instance method |
+| Tracking class-level data like a counter | `@classmethod` |
+| Creating objects from different input formats | `@classmethod` as alternative constructor |
+| Pure utility with no class or instance needed | `@staticmethod` |
+| Hiding implementation details | `_name` or `__name` |
+| Controlled access to private data | Expose via a public method |

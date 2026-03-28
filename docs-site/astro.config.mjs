@@ -146,7 +146,7 @@ export default defineConfig({
       sidebar: [
         { label: "Home", link: "/" },
         {
-          label: "OOP",
+          label: "Object Oriented Programming",
           items: [
             {
               label: "Foundation",
@@ -165,8 +165,9 @@ export default defineConfig({
                 },
               ],
             },
-            { label: "Properties", link: "/ch01_oop/properties/" },
-            { label: "Advanced", link: "/ch01_oop/advanced/" },
+            { label: "Properties", link: "/ch01_oop/04_properties/" },
+            { label: "Advanced", link: "/ch01_oop/05_advanced/" },
+            { label: "Pythonic way", link: "/ch01_oop/06_pythonic/" },
           ],
         },
       ],

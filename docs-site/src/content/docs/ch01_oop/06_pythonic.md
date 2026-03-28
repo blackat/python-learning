@@ -1,9 +1,9 @@
 ---
-title: OOP — Pythonic
-description: "@property, getters, setters, validation, and the _name convention."
+title: The Pythonic way
+description: "Follow Python's own idioms and philosophy."
 ---
 
-# What Does It Mean Pythonic?
+## What Does It Mean Pythonic?
 
 **Pythonic** means writing code that follows Python's own idioms and philosophy — code that feels natural to the language rather than transplanted from another one.
 
@@ -17,6 +17,12 @@ Readability counts.
 ```
 
 ## Un-pythonic vs pythonic
+
+:::note["The underlying principle"]
+Pythonic code is not about being clever — it is about using the language the way it was designed to be used. Python gives you tools like list comprehensions, context managers, unpacking, and iterators precisely so you do not need to work around them.
+
+A useful test: if your Python looks like Java or C with different syntax, it probably is not pythonic yet.
+:::
 
 ### Looping with an index (C-style thinking)
 
@@ -81,9 +87,3 @@ f.close()
 with open("file.txt") as f:
     data = f.read()
 ```
-
-### The underlying principle
-
-Pythonic code is not about being clever — it is about using the language the way it was designed to be used. Python gives you tools like list comprehensions, context managers, unpacking, and iterators precisely so you do not need to work around them.
-
-A useful test: if your Python looks like Java or C with different syntax, it probably is not pythonic yet.

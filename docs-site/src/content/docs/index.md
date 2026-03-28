@@ -1,11 +1,11 @@
 ---
-title: Python Learning Journal
+title: learn.py
 description: A structured, test-driven approach to learning Python.
 template: splash
 hero:
-  tagline: Theory notes, runnable examples, and exercises that go from 🔴 to 🟢.
+  tagline: Theory notes, runnable examples, and exercises that go from ZERO to HERO.
   actions:
-    - text: Start with OOP
+    - text: Start with Object Oriented Programming
       link: ./ch01_oop/foundation/
       icon: right-arrow
       variant: primary
@@ -29,5 +29,18 @@ read notes → run examples → fill in exercises → run tests
 ## Chapters
 
 - [OOP — Foundation](/python-learning/ch01_oop/foundation/)
+- ## Key Concepts Summary
+
+| Concept | Purpose |
+|---|---|
+| `__init__` | Initialize object state |
+| `self` | Reference to current instance |
+| `super()` | Access parent class |
+| `@property` | Controlled attribute access |
+| `@classmethod` | Method that works on the class |
+| `@staticmethod` | Utility method, no class/instance access |
+| `__str__` / `__repr__` | String representations |
+| `_x` / `__x` | Protected / private conventions |
+
 - [OOP — Properties](/python-learning/ch01_oop/properties/)
 - [OOP — Advanced](/python-learning/ch01_oop/advanced/)

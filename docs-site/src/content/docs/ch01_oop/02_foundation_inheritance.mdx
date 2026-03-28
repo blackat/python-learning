@@ -194,3 +194,35 @@ d.hello()
 ```
 
 This guarantees that the lookup order is always predictable and that no class is ever skipped or visited twice.
+
+## Quick reference
+
+A summary of the inheritance concepts covered in this chapter.
+
+### Inheritance
+
+| Concept | Syntax | Purpose |
+|---------|--------|---------|
+| Inherit from a parent | `class Dog(Animal):` | Reuse parent attributes and methods |
+| Override a method | Redefine it in the child | Replace parent behaviour |
+| Call the parent | `super().method()` | Extend rather than replace |
+| Check instance | `isinstance(dog, Animal)` | True if dog is an Animal or subclass |
+| Check subclass | `issubclass(Dog, Animal)` | True if Dog inherits from Animal |
+
+### Multiple inheritance
+
+| Concept | Syntax | Purpose |
+|---------|--------|---------|
+| Multiple parents | `class D(B, C):` | Inherit from both B and C |
+| Inspect MRO | `D.__mro__` | See the full lookup chain |
+| MRO order | left to right, child before parent | Determines which method wins |
+
+### When to use what
+
+| Situation | Use |
+|-----------|-----|
+| Child shares behaviour with parent | Inheritance |
+| Child needs different behaviour | Override the method |
+| Child extends parent `__init__` | `super().__init__()` |
+| Same method exists in multiple parents | Check `__mro__` to understand which wins |
+| Checking type at runtime | `isinstance()` over `type()` |

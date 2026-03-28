@@ -241,3 +241,25 @@ class Employee:
 ```
 
 Now `self.salary = salary` in `__init__` triggers the setter — which is actually what you want here. And the setter stores to `self._salary` — no recursion.
+
+## Quick reference
+
+A summary of the `@property` patterns covered in this chapter, when to use each and what it gives you.
+
+| Concept | Syntax | Purpose |
+|---------|--------|---------|
+| Getter | `@property` | Read a value — with optional logic |
+| Setter | `@name.setter` | Write a value — with validation |
+| Read-only | getter only, no setter | Raises `AttributeError` on assignment |
+| Computed | getter with no stored value | Calculated on the fly, never stored |
+| Storage | `self._name` | Internal attribute, bypasses the property |
+| Public interface | `self.name` | Goes through getter/setter |
+| Name-mangled | `self.__name` | Harder to access externally |
+
+| When | Use |
+|------|-----|
+| No logic needed | Plain attribute — no `@property` |
+| Validation on write | `@property` + setter |
+| Computed value | `@property` getter only |
+| Read-only attribute | `@property` getter, no setter |
+| Side effects on change | `@property` + setter |

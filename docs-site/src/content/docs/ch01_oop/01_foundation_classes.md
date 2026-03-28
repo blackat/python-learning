@@ -178,3 +178,42 @@ Rectangle(width=4, height=5)
 If you only define `__repr__` — `print()` will fall back to it. If you define both, `print()` uses `__str__` and the REPL uses `__repr__`.
 
 For most classes defining just `__repr__` is enough.
+
+## Quick reference
+
+A summary of the core concepts covered in this chapter.
+
+### Classes and instances
+
+| Concept | Syntax | Purpose |
+|---------|--------|---------|
+| Define a class | `class Dog:` | Create a blueprint |
+| Create an instance | `Dog("Rex", 3)` | Concrete object from the blueprint |
+| Class attribute | `species = "Canis familiaris"` | Shared by all instances |
+| Instance attribute | `self.name = name` | Unique to each instance |
+| Instance method | `def bark(self):` | Behaviour tied to an instance |
+
+### String representation
+
+| Method | Triggered by | For |
+|--------|-------------|-----|
+| `__str__` | `print(obj)`, `str(obj)` | End users — readable |
+| `__repr__` | REPL, debugger, `repr(obj)` | Developers — unambiguous |
+
+### `self`
+
+| Concept | Meaning |
+|---------|---------|
+| `self` | Reference to the current instance |
+| `dog1.bark()` | Python rewrites as `Dog.bark(dog1)` |
+| Always first argument | Every instance method receives `self` automatically |
+
+### Pythonic class design
+
+| Situation | Use |
+|-----------|-----|
+| Primarily storing data | `@dataclass` |
+| Need validation, properties, complex logic | plain `class` |
+| Immutable data | `@dataclass(frozen=True)` |
+| Memory efficiency | `@dataclass(slots=True)` |
+| Only one representation needed | Define `__repr__` — `print()` falls back to it |
