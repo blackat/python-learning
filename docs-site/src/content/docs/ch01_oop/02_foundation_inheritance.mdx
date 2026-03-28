@@ -3,13 +3,11 @@ title: "Inheritance"
 description: How classes relate to each other
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
-
 Inheritance lets one class **build on top of another** — reusing its attributes and methods without rewriting them. The class being inherited from is called the **parent** (or base class), and the class that inherits is called the **child** (or subclass).
 
 The core idea is the **is-a** relationship: a `Dog` *is an* `Animal`. A `Manager` *is an* `Employee`. When that relationship holds, inheritance is the right tool.
 
-```
+```bash frame="none"
 Animal          ← parent: defines shared behaviour
 ├── Dog         ← child: inherits from Animal, adds its own
 └── Cat         ← child: inherits from Animal, adds its own
@@ -154,6 +152,9 @@ print(d.hello())     # Hello from B
 # MRO = Method Resolution Order — the lookup chain
 print(D.__mro__)     # D → B → C → A → object
 ```
+
+<a href="https://pythontutor.com/render.html#code=class%20A%3A%0A%20%20%20%20def%20hello%28self%29%3A%0A%20%20%20%20%20%20%20%20return%20%22Hello%20from%20A%22%0A%0Aclass%20B%28A%29%3A%0A%20%20%20%20def%20hello%28self%29%3A%0A%20%20%20%20%20%20%20%20return%20%22Hello%20from%20B%22%0A%0Aclass%20C%28A%29%3A%0A%20%20%20%20def%20hello%28self%29%3A%0A%20%20%20%20%20%20%20%20return%20%22Hello%20from%20C%22%0A%0Aclass%20D%28B%2C%20C%29%3A%0A%20%20%20%20pass%0A%0Ad%20%3D%20D%28%29%0Aprint%28d.hello%28%29%29%0Aprint%28D.__mro__%29&cumulative=false&py=3" target="_blank" rel="noopener noreferrer">▶ Run this example</a>
+
 Python uses **C3 linearization** to determine which method wins. Always check `__mro__` when using multiple inheritance.
 
 ### MRO — Method Resolution Order
