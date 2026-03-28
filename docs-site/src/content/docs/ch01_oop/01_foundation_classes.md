@@ -217,3 +217,70 @@ A summary of the core concepts covered in this chapter.
 | Immutable data | `@dataclass(frozen=True)` |
 | Memory efficiency | `@dataclass(slots=True)` |
 | Only one representation needed | Define `__repr__` — `print()` falls back to it |
+
+## Exercise 1 — Basic class
+
+Create a `Rectangle` class that:
+
+- Takes `width` and `height` in `__init__`
+- Has an `area()` method
+- Has a `perimeter()` method
+- Has a `__str__` that returns `"Rectangle(width=W, height=H)"`
+- Has a `is_square()` method that returns `True` if width equals height
+```python title="Expected output"
+r = Rectangle(4, 6)
+print(r)                # Rectangle(width=4, height=6)
+print(r.area())         # 24
+print(r.perimeter())    # 20
+print(r.is_square())    # False
+
+s = Rectangle(5, 5)
+print(s.is_square())    # True
+```
+
+<details class="exercise">
+<summary>Solution</summary>
+
+<div>
+
+```python title="solution.py"
+class Rectangle:
+    def __init__(self, width: float, height: float) -> None:
+        self.width = width
+        self.height = height
+
+    def area(self) -> float:
+        return self.width * self.height
+
+    def perimeter(self) -> float:
+        return 2 * (self.width + self.height)
+
+    def is_square(self) -> bool:
+        return self.width == self.height
+
+    def __str__(self) -> str:
+        return f"Rectangle(width={self.width}, height={self.height})"
+```
+
+`area()` and `perimeter()` are straightforward formulas. `is_square()` is a single equality check — width equals height. `__str__` uses an f-string to match the expected format exactly.
+```python title="test_exercise_01.py"
+from lessons.ch01_oop.exercises.exercise_01 import Rectangle
+
+def test_area():
+    assert Rectangle(4, 6).area() == 24
+
+def test_perimeter():
+    assert Rectangle(4, 6).perimeter() == 20
+
+def test_is_square_false():
+    assert Rectangle(4, 6).is_square() is False
+
+def test_is_square_true():
+    assert Rectangle(5, 5).is_square() is True
+
+def test_str():
+    assert str(Rectangle(4, 6)) == "Rectangle(width=4, height=6)"
+```
+
+</div>
+</details>

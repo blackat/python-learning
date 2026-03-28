@@ -115,3 +115,83 @@ A summary of the access control conventions and method types covered in this cha
 | Pure utility with no class or instance needed | `@staticmethod` |
 | Hiding implementation details | `_name` or `__name` |
 | Controlled access to private data | Expose via a public method |
+
+## Exercises
+
+### Exercise 2 — Class & instance attributes
+
+Create a `BankAccount` class that:
+
+- Tracks total number of accounts created (class attribute)
+- Has `owner` and `balance` as instance attributes
+- Has `deposit(amount)` and `withdraw(amount)` methods
+- `withdraw` should raise `ValueError` if funds are insufficient
+- Has `get_account_count()` as a `@classmethod`
+- Has `__str__` showing owner and balance
+```python title="Expected output"
+acc1 = BankAccount("Alice", 1000)
+acc2 = BankAccount("Bob", 500)
+
+acc1.deposit(200)
+acc1.withdraw(100)
+print(acc1)                          # BankAccount(owner=Alice, balance=1100)
+print(BankAccount.get_account_count())  # 2
+acc2.withdraw(1000)                  # ValueError: Insufficient funds
+```
+
+<details class="exercise">
+<summary>Solution</summary>
+<div>
+```python title="exercise_03.py"
+class BankAccount:
+    totalAccounts = 0
+
+    def __init__(self, owner: str, balance: float) -> None:
+        self.owner = owner
+        self.balance = balance
+        BankAccount.totalAccounts += 1
+
+    def deposit(self, amount: float) -> None:
+        self.balance += amount
+
+    def withdraw(self, amount: float) -> None:
+        if amount > self.balance:
+            raise ValueError("Insufficient funds")
+        self.balance -= amount
+
+    def get_balance(self) -> float:
+        return self.balance
+
+    def get_owner(self) -> str:
+        return self.owner
+
+    @classmethod
+    def get_account_count(cls) -> int:
+        return cls.totalAccounts
+
+    def __str__(self) -> str:
+        return f"BankAccount(owner={self.owner}, balance={self.balance})"
+```
+
+`totalAccounts` is a class attribute — it lives on the class, not on any instance, so it counts across all accounts. `get_account_count()` uses `cls` instead of `self` — it works on the class itself, not an instance. `withdraw` validates before modifying — if the check fails, `balance` is never touched.
+```python title="test_exercise_03.py"
+import pytest
+from exercises.ch01_oop.exercise_03 import BankAccount
+
+def test_balance_account():
+    acc1 = BankAccount("Alice", 1000)
+    acc2 = BankAccount("Bob", 500)
+
+    acc1.deposit(200)
+    acc1.withdraw(100)
+
+    assert acc1.get_balance() == 1100
+    assert acc1.get_owner() == "Alice"
+    assert BankAccount.get_account_count() == 2
+
+    with pytest.raises(ValueError, match="Insufficient funds"):
+        acc2.withdraw(1000)
+```
+
+</div>
+</details>

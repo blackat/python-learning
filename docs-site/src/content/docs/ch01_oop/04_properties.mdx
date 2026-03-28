@@ -263,3 +263,98 @@ A summary of the `@property` patterns covered in this chapter, when to use each 
 | Computed value | `@property` getter only |
 | Read-only attribute | `@property` getter, no setter |
 | Side effects on change | `@property` + setter |
+
+---
+
+## Exercises
+
+### Exercise 3 — Properties
+
+Create a `Temperature` class that:
+
+- Stores temperature internally in **Celsius**
+- Exposes a `celsius` property with validation (cannot be below -273.15)
+- Exposes a `fahrenheit` property that converts automatically
+- Exposes a `kelvin` property that converts automatically
+- All three properties have setters that update the internal value correctly
+```python title="Expected output"
+t = Temperature(100)
+print(t.celsius)        # 100
+print(t.fahrenheit)     # 212.0
+print(t.kelvin)         # 373.15
+
+t.fahrenheit = 32
+print(t.celsius)        # 0.0
+
+t.celsius = -300        # ValueError: Below absolute zero
+```
+
+<details class="exercise">
+<summary>**Solution**</summary>
+<div>
+```python title="exercise_02.py"
+class Temperature:
+    def __init__(self, celsius: float) -> None:
+        self.celsius = celsius  # uses the setter for validation
+
+    @property
+    def celsius(self) -> float:
+        return self._celsius
+
+    @celsius.setter
+    def celsius(self, value: float) -> None:
+        if value < -273.15:
+            raise ValueError("Temperature below absolute zero")
+        self._celsius = value
+
+    @property
+    def fahrenheit(self) -> float:
+        return self._celsius * 9 / 5 + 32
+
+    @fahrenheit.setter
+    def fahrenheit(self, value: float) -> None:
+        self._celsius = (value - 32) * 5 / 9
+
+    @property
+    def kelvin(self) -> float:
+        return self._celsius + 273.15
+
+    @kelvin.setter
+    def kelvin(self, value: float) -> None:
+        self._celsius = value - 273.15
+
+    def __repr__(self) -> str:
+        return f"Temperature(celsius={self._celsius})"
+```
+
+`_celsius` is the single source of truth — all three properties read from and write to it. The `celsius` setter validates the value before storing it. The `fahrenheit` and `kelvin` setters convert to Celsius and delegate storage to `_celsius` directly — bypassing the setter to avoid double conversion.
+```python title="test_exercise_02.py"
+import pytest
+from exercises.ch01_oop.exercise_02 import Temperature
+
+def test_temperature(capsys):
+    t = Temperature(100)
+
+    print(t.celsius)
+    captured = capsys.readouterr()
+    assert captured.out == "100\n"
+
+    print(t.fahrenheit)
+    captured = capsys.readouterr()
+    assert captured.out == "212.0\n"
+
+    print(t.kelvin)
+    captured = capsys.readouterr()
+    assert captured.out == "373.15\n"
+
+    t.fahrenheit = 32
+    print(t.celsius)
+    captured = capsys.readouterr()
+    assert captured.out == "0.0\n"
+
+    with pytest.raises(ValueError, match="Temperature below absolute zero"):
+        t.celsius = -300
+```
+
+</div>
+</details>

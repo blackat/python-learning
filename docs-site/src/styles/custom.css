@@ -7,6 +7,7 @@
   --color-amber-dim:  #7A4510;
   --color-green:      #5AAF78;
   --color-green-dim:  #1a3d28;
+  --color-green-light:#85e5a6;
   --color-red:        #C45C5C;
   --color-red-light:  #e89898;
   --color-red-dim:    #3d1a1a;
@@ -15,7 +16,7 @@
   --color-teal-dim:   #2A5550;
   --color-purple:     #8B6FC0;
   --color-purple-dim: #2A1F40;
-  --color-purple-light: #b49ce2;
+  --color-purple-light: #c7b0f2;
 
   --color-bg:         #0f1117;
   --color-bg-raised:  #161b22;
@@ -368,6 +369,7 @@ details.deeper summary {
   gap: 0.5rem !important;
   list-style: none !important;
   padding: 0.75rem 1.5rem !important;
+  color: var(--color-purple-light);
 }
 
 details.deeper > summary::-webkit-details-marker {
@@ -400,5 +402,59 @@ details.deeper > div {
 }
 
 details.deeper .expressive-code {
+  margin-inline: 0 !important;
+}
+
+/* ============================================================
+   Exercise solution block
+   ============================================================ */
+
+details.exercise {
+  border: 1px solid var(--color-green) !important;
+  background: var(--color-green-dim) !important;
+  padding-left: 0 !important;
+}
+
+details.exercise summary {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  list-style: none !important;
+  padding: 0.75rem 1.5rem !important;
+  color: var(--color-green-light);
+}
+
+details.exercise > summary::-webkit-details-marker {
+  display: none !important;
+}
+
+details.exercise > summary::marker {
+  display: none !important;
+  content: "" !important;
+}
+
+details.exercise summary::before {
+  content: "›" !important;
+  color: var(--color-green) !important;
+  font-size: 1.2rem !important;
+  transition: transform 0.2s !important;
+  margin-left: 0.5rem !important;
+}
+
+details.exercise[open] summary::before {
+  transform: rotate(90deg) !important;
+}
+
+details.exercise > div {
+  padding: 1rem 0 !important;
+}
+
+details.exercise > div {
+  padding: 1rem 1.5rem !important;
+}
+
+details.exercise .expressive-code {
   margin-inline: 0 !important;
 }

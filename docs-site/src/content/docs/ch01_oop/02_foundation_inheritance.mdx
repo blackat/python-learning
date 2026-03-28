@@ -226,3 +226,106 @@ A summary of the inheritance concepts covered in this chapter.
 | Child extends parent `__init__` | `super().__init__()` |
 | Same method exists in multiple parents | Check `__mro__` to understand which wins |
 | Checking type at runtime | `isinstance()` over `type()` |
+
+## Exercises
+
+### Exercise 4 — Inheritance
+
+Model a company's staff. Create:
+
+- `Employee` base class with `name`, `salary`, and `get_pay()` method
+- `FullTimeEmployee(Employee)` — fixed monthly salary
+- `PartTimeEmployee(Employee)` — hourly rate × hours worked
+- `Manager(Employee)` — salary + sum of bonuses list
+- All should have meaningful `__str__`
+- A standalone function `print_payroll(employees)` that prints each employee's pay
+```python title="Expected output"
+staff = [
+    FullTimeEmployee("Alice", 5000),
+    PartTimeEmployee("Bob", 20, 80),      # $20/hr × 80hrs
+    Manager("Carol", 7000, [500, 300]),   # salary + bonuses
+]
+print_payroll(staff)
+# Alice (FullTime)  — $5000
+# Bob   (PartTime)  — $1600
+# Carol (Manager)   — $7800
+```
+
+<details class="exercise">
+<summary>Solution</summary>
+<div>
+
+Since this exercise involves multiple classes, each lives in its own file inside `exercise_04/`.
+```python title="exercise_04/employee.py"
+class Employee:
+    def __init__(self, name: str, salary: float) -> None:
+        self.name = name
+        self.salary = salary
+
+    def get_pay(self) -> float:
+        return self.salary
+
+    def __str__(self) -> str:
+        return f"Employee(name={self.name}, salary={self.salary})"
+```
+```python title="exercise_04/full_time_employee.py"
+from exercises.ch01_oop.exercise_04.employee import Employee
+
+class FullTimeEmployee(Employee):
+    def __str__(self) -> str:
+        return f"{self.name} (FullTime) - ${self.salary}"
+```
+```python title="exercise_04/part_time_employee.py"
+from exercises.ch01_oop.exercise_04.employee import Employee
+
+class PartTimeEmployee(Employee):
+    def __init__(self, name: str, salary_per_hour: float, worked_hours: float) -> None:
+        super().__init__(name, salary_per_hour * worked_hours)
+
+    def __str__(self) -> str:
+        return f"{self.name} (PartTime) - ${self.salary}"
+```
+```python title="exercise_04/manager.py"
+from exercises.ch01_oop.exercise_04.employee import Employee
+
+class Manager(Employee):
+    def __init__(self, name: str, salary: float, bonuses: list[float]) -> None:
+        super().__init__(name, salary + sum(bonuses))
+
+    def __str__(self) -> str:
+        return f"{self.name} (Manager) - ${self.salary}"
+```
+```python title="exercise_04/utils.py"
+from exercises.ch01_oop.exercise_04.employee import Employee
+
+def print_payroll(employees: list[Employee]) -> None:
+    for e in employees:
+        print(e)
+```
+
+`FullTimeEmployee` needs no `__init__` — it inherits directly from `Employee` since the salary is already fixed. `PartTimeEmployee` computes the total pay in `__init__` before delegating to `super()` — so `salary` on the instance already holds the final value. `Manager` does the same — it sums the bonuses and adds them to the base salary before calling `super()`. `print_payroll` is a standalone function, not a method — it takes any list of `Employee` objects and lets polymorphism handle the rest.
+```python title="test_exercise_04.py"
+from exercises.ch01_oop.exercise_04.full_time_employee import FullTimeEmployee
+from exercises.ch01_oop.exercise_04.manager import Manager
+from exercises.ch01_oop.exercise_04.part_time_employee import PartTimeEmployee
+from exercises.ch01_oop.exercise_04.utils import print_payroll
+
+def test_utils(capsys):
+    staff = [
+        FullTimeEmployee("Alice", 5000),
+        PartTimeEmployee("Bob", 20, 80),
+        Manager("Carol", 7000, [500, 300]),
+    ]
+
+    print_payroll(staff)
+
+    captured = capsys.readouterr()
+    assert captured.out == (
+        "Alice (FullTime) - $5000\n"
+        "Bob (PartTime) - $1600\n"
+        "Carol (Manager) - $7800\n"
+    )
+```
+
+</div>
+</details>
