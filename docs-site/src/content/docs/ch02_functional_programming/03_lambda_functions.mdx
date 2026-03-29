@@ -3,9 +3,78 @@ title: Lambda Functions
 description: What a class is
 ---
 
-Anonymous, single-expression functions:
+:::note[Lambda function]
+A **lambda function** is a small, anonymous function, **<mark>anonymous meaning it has no name</mark>**. 
+It is defined inline, on the spot, and typically used for short, throwaway logic that doesn't warrant a full function definition.
+The concept comes from **lambda calculus**, a mathematical framework for expressing computation through function abstraction, 
+developed by Alonzo Church in the 1930s. It is one of the theoretical foundations of functional programming.
+
+Lambda functions are a common feature across many languages, though the syntax varies:
+
+- **Python**: `lambda x: x ** 2`
+- **JavaScript**: `x => x ** 2`
+- **Java**: `x -> x * x`
+- **Haskell**: `\x -> x ^ 2`
+
+The idea is always the same: **<mark>a compact, nameless function defined in place</mark>**.
+:::
+
+In Python, a lambda is a **single-expression, anonymous function**. It behaves exactly like a regular `def` function but is written
+in one line and **returns its expression implicitly**, no `return` keyword needed:
+
+```python title="Lambda function"
+lambda <arguments> : <expression>
+```
+
+```python title="Examples"
+# Syntax: lambda arguments: expression
+square = lambda x: x ** 2
+add    = lambda x, y: x + y
+greet  = lambda name: f"Hello, {name}!"
+
+print(square(5))        # 25
+print(add(3, 4))        # 7
+print(greet("Alice"))   # Hello, Alice!
+```
+
+:::tip[Where Lambdas Shine]
+Their real power is as **inline arguments** to higher-order functions, where defining a full named function would feel unnecessarily heavy:
 
 ```python
+# Input definition
+numbers = [3, 1, 4, 1, 5, 9, 2]
+
+# Sorting by a custom key
+sorted_nums = sorted(numbers, key=lambda x: -x)        # descending
+print(sorted_nums)   # [9, 5, 4, 3, 2, 1, 1]
+
+# Filtering evens
+evens = list(filter(lambda x: x % 2 == 0, numbers))
+print(evens)         # [4, 2]
+
+# Doubling each value
+doubled = list(map(lambda x: x * 2, numbers))
+print(doubled)       # [6, 2, 8, 2, 10, 18, 4]
+```
+:::
+
+
+### Lambda vs `def` — When to Use Which
+
+| | `lambda` | `def` |
+|---|---|---|
+| Has a name | ❌ Anonymous | ✅ Named |
+| Number of expressions | One only | Unlimited |
+| Can include statements | ❌ No | ✅ Yes |
+| Reusability | Low — inline use | High — defined once, used anywhere |
+| Readability | Good for simple logic | Better for complex logic |
+
+:::note[Rule of thumb]
+If your lambda is getting complicated or you find yourself reusing it, convert it into a proper `def` function. Lambdas are best kept 
+**<mark>short and situational</mark>**.
+:::
+
+```python title="Advantages"
 # Syntax: lambda arguments: expression
 square    = lambda x: x ** 2
 add       = lambda x, y: x + y
@@ -26,15 +95,15 @@ print(sorted_data)      # [('Bob', 25), ('Alice', 30), ('Carol', 35)]
 # Sort by name length, then alphabetically
 sorted_data = sorted(data, key=lambda p: (len(p[0]), p[0]))
 
-
 # With filter, map, reduce
 nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 evens   = list(filter(lambda x: x % 2 == 0, nums))
 squared = list(map(lambda x: x ** 2, nums))
 print(evens)            # [2, 4, 6, 8, 10]
 print(squared)          # [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+```
 
-
+```python title="Limitations"
 # Limitation — lambdas are single expressions only
 # Use def for anything complex
 # ❌ Hard to read

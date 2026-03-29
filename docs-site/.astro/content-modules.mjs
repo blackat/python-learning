@@ -14,5 +14,6 @@ export default new Map([
 ["src/content/docs/ch02_functional_programming/08_function_composition.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fch02_functional_programming%2F08_function_composition.mdx&astroContentModuleFlag=true")],
 ["src/content/docs/ch02_functional_programming/09_immutability_patterns.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fch02_functional_programming%2F09_immutability_patterns.mdx&astroContentModuleFlag=true")],
 ["src/content/docs/ch02_functional_programming/10_functional_iteration.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fch02_functional_programming%2F10_functional_iteration.mdx&astroContentModuleFlag=true")],
+["src/content/docs/ch02_functional_programming/11_questions.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Fch02_functional_programming%2F11_questions.mdx&astroContentModuleFlag=true")],
 ["src/content/docs/index.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fdocs%2Findex.mdx&astroContentModuleFlag=true")]]);
 		
