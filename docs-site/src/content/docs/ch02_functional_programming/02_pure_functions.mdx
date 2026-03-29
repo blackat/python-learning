@@ -1,9 +1,67 @@
 ---
 title: Pure functions
-description: What a class is
+description: What pure functions are
 ---
 
+### Pure Functions
+
+A pure function has two guarantees:
+
+1. **<mark>Deterministic</mark>**: given the same input, it **always** returns the same output
+2. **<mark>No side effects</mark>**: it **doesn't read from or modify anything** outside its own scope, 
+    - no global state
+    - no I/O
+    - no mutation of arguments
+
 ```python
+# Pure: depends only on its inputs, changes nothing outside
+def add(a, b):
+    return a + b
+
+def square(n):
+    return n ** 2
+```
+
+:::note
+Pure functions are predictable, easy to test, and safe to run in parallel.
+:::
+
+### Impure Functions
+
+An impure function violates one or both of the above rules: it either produces different results for the same input, or it 
+causes side effects.
+
+```python title="Common causes of impurity"
+# 1. Modifies external/global state
+count = 0
+def increment():
+    global count
+    count += 1          # side effect: mutates global variable
+
+# 2. Depends on external state (non-deterministic output)
+import random
+def roll_dice():
+    return random.randint(1, 6)   # same call, different results
+
+# 3. Mutates its argument
+def append_item(lst, item):
+    lst.append(item)    # side effect: modifies the caller's list
+    return lst
+
+# 4. Performs I/O
+def greet(name):
+    print(f"Hello, {name}")  # side effect: writes to stdout
+```
+
+:::tip[The Practical Balance]
+Impure functions aren't inherently bad, real programs *need* I/O, randomness, and state. The functional programming discipline 
+is to **keep as much logic as possible in pure functions**, and **isolate impurity** (I/O, mutation) to the edges of your program.
+This makes the core logic easy to reason about and test, while still allowing the program to interact with the world.
+:::
+
+### Impure vs. pure
+
+```python title="Impure functions"
 # ❌ Impure — depends on and modifies external state
 total = 0
 
@@ -16,8 +74,9 @@ def add_to_total(x):
 def append_zero(lst):
     lst.append(0)       # Mutates input — surprising to caller!
     return lst
+```
 
-
+```python title="Pure functions"
 # ✅ Pure — no side effects, same input → same output
 def add(a, b):
     return a + b        # Only depends on inputs, touches nothing else
@@ -41,3 +100,81 @@ def fibonacci(n):                   # Pure → safe to cache!
         return n
     return fibonacci(n-1) + fibonacci(n-2)
 ```
+
+### Side by Side
+
+| Property | Pure | Impure |
+|---|---|---|
+| Same input → same output | ✅ Always | ❌ Not guaranteed |
+| Modifies external state | ❌ Never | ✅ May do so |
+| Easy to test | ✅ Yes | ⚠️ Harder |
+| Safe to cache / memoize | ✅ Yes | ❌ No |
+| Safe to parallelize | ✅ Yes | ⚠️ Depends |
+
+## Memoization
+
+Memoization is an optimization technique where a function **caches its results**. The first time it's called with a given input, 
+it computes and stores the result; every subsequent call with the same input skips the computation and returns the cached value 
+directly.
+
+:::note
+The word comes from *"memo"*, the function writes itself a note to remember what it already worked out.
+:::
+
+### A Simple Example
+
+```python
+# Without memoization — recomputes every time
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+```
+
+Calling `fibonacci(40)` here makes **millions** of redundant recursive calls. With memoization:
+
+```python
+# Manual memoization using a cache dict
+cache = {}
+def fibonacci(n):
+    if n in cache:
+        return cache[n]       # return stored result instantly
+    if n <= 1:
+        return n
+    cache[n] = fibonacci(n - 1) + fibonacci(n - 2)
+    return cache[n]
+```
+
+Or using Python's built-in decorator:
+
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+```
+
+`lru_cache` **handles the caching automatically**. `LRU` stands for *Least Recently Used*: it can **optionally discard** old cached 
+results if memory is a concern.
+
+### Why It Only Works on Pure Functions
+
+Memoization assumes that **the same input always produces the same output**. If a function is impure (relying on global state, 
+randomness, or I/O) caching its result would return stale or wrong answers. This is why **memoizability** is listed as a key advantage 
+of pure functions.
+
+### The Trade-off
+
+| | Detail |
+|---|---|
+| **Saves** | Time (avoids recomputation) |
+| **Costs** | Memory (stores previous results) |
+| **Best for** | Expensive, repeatedly-called pure functions |
+| **Avoid when** | Inputs are always unique, or memory is tight |
+
+:::tip[In short]
+Memoization trades **memory for speed**.
+:::

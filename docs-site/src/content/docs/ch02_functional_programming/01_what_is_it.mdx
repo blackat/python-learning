@@ -3,23 +3,47 @@ title: What is functional programming
 description: What a class is
 ---
 
-Functional programming treats computation as the **evaluation of functions** — avoiding shared state and mutable data. Python isn't a pure functional language, but it has excellent functional tools.
+:::note[Functional programming]
+Functional programming (FP) is a programming paradigm that treats computation as the evaluation of mathematical functions.
+Its core principles are:
 
-Core ideas:
-- **Pure functions** — same input always gives same output, no side effects
-- **Immutability** — don't modify data, create new data
-- **Function composition** — build complex behavior from simple functions
-- **Higher-order functions** — functions that take or return other functions
+- **Pure functions**: given the same input, always return the same output, with no side effects (no modifying external state)
+- **Immutability**: data is not changed after creation; instead, new data is produced
+- **First-class & higher-order functions**: functions can be passed as arguments, returned from other functions, and assigned to variables
+- **Function composition**: complex behavior is built by combining simple functions
+- **Declarative style**: you describe *what* to compute, not *how* step by step
 
-```python
+Languages like Haskell and Erlang are built around FP, but many modern languages support it alongside other paradigms.
+:::
+
+Functional programming treats computation as the **<mark>evaluation of functions</mark>** **avoiding shared state and mutable data**.
+Python isn't a pure functional language, is a multi-paradigm language that supports functional programming, but it has excellent 
+functional tools. Key FP tools in Python include:
+
+- **`lambda`** — anonymous, single-expression functions
+- **`map()`, `filter()`, `reduce()`** — classic higher-order functions for transforming and aggregating data
+- **List/dict/set comprehensions** — a Pythonic, declarative way to build collections
+- **`functools` module** — utilities like `functools.reduce()`, `functools.partial()`, and `functools.lru_cache()`
+- **Closures** — functions that capture variables from their enclosing scope
+- **Immutability via convention** — Python has no enforced immutability, but `tuple` and `frozenset` are immutable types
+
+A quick example comparing styles:
+
+```python title="Imperative style"
 # ❌ Imperative style — how to do it
+
 total = 0
+
 for x in [1, 2, 3, 4, 5]:
     if x % 2 == 0:
         total += x ** 2
+```
 
+```python title="Functional style"
 # ✅ Functional style — what you want
+
 from functools import reduce
+
 total = reduce(lambda acc, x: acc + x,
                map(lambda x: x**2,
                    filter(lambda x: x % 2 == 0, [1, 2, 3, 4, 5])))
@@ -28,37 +52,63 @@ total = reduce(lambda acc, x: acc + x,
 total = sum(x**2 for x in [1, 2, 3, 4, 5] if x % 2 == 0)
 ```
 
+Another example:
+
+```python title="Imperative style"
+numbers = [1, 2, 3, 4, 5]
+
+# ❌ Imperative style
+squares = []
+for n in numbers:
+    if n % 2 == 0:
+        squares.append(n ** 2)
+```
+
+```python title="Functional style"
+numbers = [1, 2, 3, 4, 5]
+
+# ✅ Functional style
+squares = list(map(lambda n: n ** 2, filter(lambda n: n % 2 == 0, numbers)))
+
+# ✅ Pythonic functional style (comprehension)
+squares = [n ** 2 for n in numbers if n % 2 == 0]
+```
+
+Python's functional support is practical rather than pure, **<mark>it doesn't enforce immutability or guarantee tail-call optimization</mark>**, 
+so it's best used selectively alongside OOP or procedural code rather than as an exclusive paradigm.
+
+
 ## Quick Reference
 
-| Concept | Tool | Use case |
-|---|---|---|
-| Transform | `map()`, comprehension | Apply function to every element |
-| Filter | `filter()`, comprehension | Keep elements matching condition |
-| Fold | `reduce()` | Collapse iterable to single value |
-| Fix args | `partial()` | Pre-fill function arguments |
-| Cache | `lru_cache`, `cache` | Memoize pure functions |
-| Overload | `singledispatch` | Type-based dispatch |
-| Fill comparisons | `total_ordering` | Define one, get all |
-| Capture state | Closure | Stateful function factories |
-| Combine functions | Composition | Build pipelines from small functions |
-| Immutability | `NamedTuple`, `frozen=True` | Safe, predictable data |
-| Iteration tools | `itertools` | Efficient, composable iteration |
+| Concept           | Tool                        | Use case                             |
+| ----------------- | --------------------------- | ------------------------------------ |
+| Transform         | `map()`, comprehension      | Apply function to every element      |
+| Filter            | `filter()`, comprehension   | Keep elements matching condition     |
+| Fold              | `reduce()`                  | Collapse iterable to single value    |
+| Fix args          | `partial()`                 | Pre-fill function arguments          |
+| Cache             | `lru_cache`, `cache`        | Memoize pure functions               |
+| Overload          | `singledispatch`            | Type-based dispatch                  |
+| Fill comparisons  | `total_ordering`            | Define one, get all                  |
+| Capture state     | Closure                     | Stateful function factories          |
+| Combine functions | Composition                 | Build pipelines from small functions |
+| Immutability      | `NamedTuple`, `frozen=True` | Safe, predictable data               |
+| Iteration tools   | `itertools`                 | Efficient, composable iteration      |
 
 ---
 
 ## The Truly Final Complete Advanced Python Journey
 
-| Topic | Status |
-|---|---|
-| OOP & Dunder Methods | ✅ |
-| **Functional Programming** | ✅ |
-| Iterators & Generators | ✅ |
-| Decorators | ✅ |
-| Context Managers | ✅ |
-| Advanced Error Handling | ✅ |
-| Advanced Data Structures | ✅ |
-| Concurrency & Async | ✅ |
-| Metaclasses & Descriptors | ✅ |
-| Memory & Performance | ✅ |
-| Modules & Packaging | ✅ |
-| Type Hints & Static Analysis | ✅ |
+| Topic                        | Status |
+| ---------------------------- | ------ |
+| OOP & Dunder Methods         | ✅     |
+| **Functional Programming**   | ✅     |
+| Iterators & Generators       | ✅     |
+| Decorators                   | ✅     |
+| Context Managers             | ✅     |
+| Advanced Error Handling      | ✅     |
+| Advanced Data Structures     | ✅     |
+| Concurrency & Async          | ✅     |
+| Metaclasses & Descriptors    | ✅     |
+| Memory & Performance         | ✅     |
+| Modules & Packaging          | ✅     |
+| Type Hints & Static Analysis | ✅     |
