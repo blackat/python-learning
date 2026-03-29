@@ -1,0 +1,55 @@
+---
+title: "Closures: functions that remember"
+description: What a class is
+---
+
+```python
+# A closure is a function that captures variables from its enclosing scope
+def make_counter(start=0, step=1):
+    count = start                       # Captured by the inner function
+
+    def counter():
+        nonlocal count                  # Modify the captured variable
+        value = count
+        count += step
+        return value
+
+    return counter
+
+
+counter1 = make_counter()
+counter2 = make_counter(10, 5)
+
+print(counter1())   # 0
+print(counter1())   # 1
+print(counter1())   # 2
+print(counter2())   # 10
+print(counter2())   # 15  ← independent state!
+
+
+# Closure as a configurable function factory
+def make_validator(min_val, max_val):
+    def validate(value):                # Captures min_val, max_val
+        if not (min_val <= value <= max_val):
+            raise ValueError(f"{value} must be between {min_val} and {max_val}")
+        return value
+    return validate
+
+validate_age    = make_validator(0, 150)
+validate_score  = make_validator(0, 100)
+validate_rating = make_validator(1, 5)
+
+print(validate_age(25))         # 25 ✅
+print(validate_score(85))       # 85 ✅
+# validate_score(150)           # ❌ ValueError
+
+
+# Classic closure gotcha — late binding in loops
+# ❌ Wrong — all functions capture the SAME variable i
+funcs = [lambda: i for i in range(5)]
+print([f() for f in funcs])     # [4, 4, 4, 4, 4]  ← all see final i=4!
+
+# ✅ Fix — capture value at creation time using default argument
+funcs = [lambda i=i: i for i in range(5)]
+print([f() for f in funcs])     # [0, 1, 2, 3, 4]  ✅
+```

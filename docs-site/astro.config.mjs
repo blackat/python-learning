@@ -171,6 +171,21 @@ export default defineConfig({
             { label: "Exercises", link: "/ch01_oop/exercises/" },
           ],
         },
+        {
+          label: "Functional programming",
+          items: [
+            { label: "What is", link: "/ch02_functional_programming/01_what_is_it/" },
+            { label: "Pure functions", link: "/ch02_functional_programming/02_pure_functions/" },
+            { label: "Lambda functions", link: "/ch02_functional_programming/03_lambda_functions/" },
+            { label: "map(), filter(), reduce()", link: "/ch02_functional_programming/04_map_filter_reduce/" },
+            { label: "Comprehensions", link: "/ch02_functional_programming/05_comprehensions/" },
+            { label: "Functional toolkit", link: "/ch02_functional_programming/06_functional_toolkit/" },
+            { label: "Closures", link: "/ch02_functional_programming/07_closures/" },
+            { label: "Function composition", link: "/ch02_functional_programming/08_function_composition/" },
+            { label: "Immutability patterns", link: "/ch02_functional_programming/09_immutability_patterns/" },
+            { label: "Functional iteration", link: "/ch02_functional_programming/10_functional_iteration/" },
+          ]
+        }
       ],
     }),
   ],

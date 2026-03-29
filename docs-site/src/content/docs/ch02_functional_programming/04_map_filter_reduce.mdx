@@ -1,0 +1,55 @@
+---
+title: map(), filter(), reduce()
+description: What a class is
+---
+
+The classic functional trio:
+
+```python
+from functools import reduce
+
+nums = [1, 2, 3, 4, 5]
+
+
+# map(func, iterable) — transform every element
+squared  = list(map(lambda x: x**2, nums))
+strings  = list(map(str, nums))             # Built-in functions work too
+print(squared)      # [1, 4, 9, 16, 25]
+print(strings)      # ['1', '2', '3', '4', '5']
+
+# map with multiple iterables
+a = [1, 2, 3]
+b = [10, 20, 30]
+sums = list(map(lambda x, y: x + y, a, b))
+print(sums)         # [11, 22, 33]
+
+
+# filter(func, iterable) — keep elements where func returns True
+evens    = list(filter(lambda x: x % 2 == 0, nums))
+positives = list(filter(None, [-1, 0, 2, None, 3, ""]))  # None removes falsy
+print(evens)        # [2, 4]
+print(positives)    # [-1, 2, 3]
+
+
+# reduce(func, iterable) — fold iterable into single value
+total   = reduce(lambda acc, x: acc + x, nums)      # 15
+product = reduce(lambda acc, x: acc * x, nums)      # 120
+maximum = reduce(lambda a, b: a if a > b else b, nums)  # 5
+
+# With initial value
+total = reduce(lambda acc, x: acc + x, nums, 100)   # 115 (starts at 100)
+
+print(total, product, maximum)
+
+
+# Python idiom — prefer comprehensions over map/filter for readability
+# These are equivalent:
+squared = list(map(lambda x: x**2, nums))
+squared = [x**2 for x in nums]                      # ← more Pythonic
+
+evens = list(filter(lambda x: x % 2 == 0, nums))
+evens = [x for x in nums if x % 2 == 0]            # ← more Pythonic
+
+# But map/filter can be cleaner with existing named functions
+strings = list(map(str, nums))                      # Clean — no lambda needed
+```

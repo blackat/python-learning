@@ -1,0 +1,39 @@
+---
+title: Comprehensions — Pythonic Functional Style
+description: What a class is
+---
+
+```python
+# List comprehension
+squares  = [x**2 for x in range(10)]
+evens    = [x for x in range(20) if x % 2 == 0]
+matrix   = [[i * j for j in range(1, 4)] for i in range(1, 4)]
+
+print(squares)      # [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+print(evens)        # [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+print(matrix)       # [[1,2,3],[2,4,6],[3,6,9]]
+
+
+# Dict comprehension
+word_lengths = {word: len(word) for word in ["apple", "banana", "cherry"]}
+inverted     = {v: k for k, v in {"a": 1, "b": 2}.items()}
+print(word_lengths) # {'apple': 5, 'banana': 6, 'cherry': 6}
+print(inverted)     # {1: 'a', 2: 'b'}
+
+
+# Set comprehension
+unique_lengths = {len(word) for word in ["apple", "banana", "kiwi", "fig"]}
+print(unique_lengths)   # {3, 4, 5, 6}
+
+
+# Generator expression — lazy, memory-efficient
+total = sum(x**2 for x in range(1_000_000))    # No list created in memory
+first_even = next(x for x in range(100) if x % 2 == 0 and x > 10)
+print(first_even)   # 12
+
+
+# Flatten nested list — functional style
+nested  = [[1, 2, 3], [4, 5], [6, 7, 8, 9]]
+flat    = [x for sublist in nested for x in sublist]
+print(flat)         # [1, 2, 3, 4, 5, 6, 7, 8, 9]
+```

@@ -1,0 +1,48 @@
+---
+title: Lambda Functions
+description: What a class is
+---
+
+Anonymous, single-expression functions:
+
+```python
+# Syntax: lambda arguments: expression
+square    = lambda x: x ** 2
+add       = lambda x, y: x + y
+greet     = lambda name: f"Hello, {name}!"
+
+print(square(5))        # 25
+print(add(3, 4))        # 7
+print(greet("Alice"))   # Hello, Alice!
+
+
+# Lambdas shine as inline arguments
+data = [("Alice", 30), ("Bob", 25), ("Carol", 35)]
+
+# Sort by age
+sorted_data = sorted(data, key=lambda person: person[1])
+print(sorted_data)      # [('Bob', 25), ('Alice', 30), ('Carol', 35)]
+
+# Sort by name length, then alphabetically
+sorted_data = sorted(data, key=lambda p: (len(p[0]), p[0]))
+
+
+# With filter, map, reduce
+nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+evens   = list(filter(lambda x: x % 2 == 0, nums))
+squared = list(map(lambda x: x ** 2, nums))
+print(evens)            # [2, 4, 6, 8, 10]
+print(squared)          # [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+
+# Limitation — lambdas are single expressions only
+# Use def for anything complex
+# ❌ Hard to read
+process = lambda x: x**2 if x > 0 else -x if x < 0 else 0
+
+# ✅ Much clearer as a named function
+def process(x):
+    if x > 0:   return x ** 2
+    if x < 0:   return -x
+    return 0
+```

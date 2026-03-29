@@ -1,0 +1,64 @@
+---
+title: Immutability patterns
+description: What a class is
+---
+
+```python
+from dataclasses import dataclass
+from typing import NamedTuple
+
+
+# NamedTuple — immutable records
+class Point(NamedTuple):
+    x: float
+    y: float
+
+    def translate(self, dx, dy):
+        return Point(self.x + dx, self.y + dy)  # Returns NEW point
+
+    def scale(self, factor):
+        return Point(self.x * factor, self.y * factor)
+
+
+p1 = Point(1, 2)
+p2 = p1.translate(3, 4)    # p1 unchanged!
+p3 = p2.scale(2)
+
+print(p1)   # Point(x=1, y=2)
+print(p2)   # Point(x=4, y=6)
+print(p3)   # Point(x=8, y=12)
+
+
+# Frozen dataclass — immutable with more features
+@dataclass(frozen=True)
+class Config:
+    host:    str = "localhost"
+    port:    int = 8080
+    debug:   bool = False
+
+    def with_port(self, port):
+        return Config(self.host, port, self.debug)  # Returns NEW config
+
+    def with_debug(self, debug):
+        return Config(self.host, self.port, debug)
+
+
+cfg = Config()
+dev_cfg  = cfg.with_port(3000).with_debug(True)    # Chaining!
+
+print(cfg)      # Config(host='localhost', port=8080, debug=False)
+print(dev_cfg)  # Config(host='localhost', port=3000, debug=True)
+
+
+# Immutable dict operations — return new dicts
+original = {"a": 1, "b": 2, "c": 3}
+
+updated  = {**original, "b": 99}           # Update a key
+extended = {**original, "d": 4}            # Add a key
+reduced  = {k: v for k, v in original.items() if k != "a"}  # Remove a key
+
+print(original)     # {'a': 1, 'b': 2, 'c': 3}  — unchanged
+print(updated)      # {'a': 1, 'b': 99, 'c': 3}
+print(extended)     # {'a': 1, 'b': 2, 'c': 3, 'd': 4}
+print(reduced)      # {'b': 2, 'c': 3}
+```

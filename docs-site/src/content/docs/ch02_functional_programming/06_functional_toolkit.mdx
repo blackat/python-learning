@@ -1,0 +1,107 @@
+---
+title: "functools: functional toolkit"
+description: What a class is
+---
+
+```python
+from functools import (
+    reduce, partial, lru_cache,
+    cache, wraps, total_ordering,
+    singledispatch, accumulate
+)
+
+
+# ── partial — fix some arguments of a function ──────────────
+def power(base, exponent):
+    return base ** exponent
+
+square = partial(power, exponent=2)     # Fix exponent=2
+cube   = partial(power, exponent=3)     # Fix exponent=3
+
+print(square(5))    # 25
+print(cube(3))      # 27
+
+# Useful with map
+numbers = [1, 2, 3, 4, 5]
+print(list(map(square, numbers)))       # [1, 4, 9, 16, 25]
+
+# partial with multiple args
+from functools import partial
+
+def log(level, message, timestamp=None):
+    print(f"[{level}] {message}")
+
+info  = partial(log, "INFO")
+error = partial(log, "ERROR")
+
+info("Server started")                  # [INFO] Server started
+error("Connection refused")             # [ERROR] Connection refused
+
+
+# ── lru_cache / cache — memoization ─────────────────────────
+@lru_cache(maxsize=128)
+def fibonacci(n):
+    if n <= 1: return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+@cache                                  # Same as lru_cache(maxsize=None)
+def factorial(n):
+    if n <= 1: return 1
+    return n * factorial(n-1)
+
+print(fibonacci(50))                    # Instant — cached results
+print(fibonacci.cache_info())           # hits=48, misses=51, ...
+
+
+# ── total_ordering — fill in comparison methods ─────────────
+from functools import total_ordering
+
+@total_ordering
+class Version:
+    def __init__(self, major, minor, patch):
+        self.major = major
+        self.minor = minor
+        self.patch = patch
+
+    def __eq__(self, other):
+        return (self.major, self.minor, self.patch) == \
+               (other.major, other.minor, other.patch)
+
+    def __lt__(self, other):            # Define ONE comparison
+        return (self.major, self.minor, self.patch) < \
+               (other.major, other.minor, other.patch)
+
+    # @total_ordering fills in: __le__, __gt__, __ge__ automatically!
+
+
+v1 = Version(1, 2, 0)
+v2 = Version(1, 3, 0)
+print(v1 < v2)      # True
+print(v1 > v2)      # False  ← auto-generated!
+print(v1 <= v2)     # True   ← auto-generated!
+print(sorted([Version(2,0,0), Version(1,0,0), Version(1,5,0)]))
+
+
+# ── singledispatch — function overloading ───────────────────
+from functools import singledispatch
+
+@singledispatch
+def process(value):
+    raise TypeError(f"Unsupported type: {type(value)}")
+
+@process.register(int)
+def _(value):
+    return f"Integer: {value * 2}"
+
+@process.register(str)
+def _(value):
+    return f"String: {value.upper()}"
+
+@process.register(list)
+def _(value):
+    return f"List of {len(value)} items"
+
+print(process(42))              # Integer: 84
+print(process("hello"))         # String: HELLO
+print(process([1, 2, 3]))       # List of 3 items
+```

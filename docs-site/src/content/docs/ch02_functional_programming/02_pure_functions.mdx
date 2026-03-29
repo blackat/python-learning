@@ -1,0 +1,43 @@
+---
+title: Pure functions
+description: What a class is
+---
+
+```python
+# ❌ Impure — depends on and modifies external state
+total = 0
+
+def add_to_total(x):
+    global total
+    total += x          # Side effect — modifies external state
+    return total
+
+# ❌ Impure — modifies its argument
+def append_zero(lst):
+    lst.append(0)       # Mutates input — surprising to caller!
+    return lst
+
+
+# ✅ Pure — no side effects, same input → same output
+def add(a, b):
+    return a + b        # Only depends on inputs, touches nothing else
+
+# ✅ Pure — returns new data instead of mutating
+def append_zero(lst):
+    return lst + [0]    # Original list untouched
+
+
+# Pure functions are:
+# - Easy to test (no setup/teardown)
+# - Easy to reason about
+# - Safe to cache (memoize)
+# - Safe to run in parallel
+
+import functools
+
+@functools.lru_cache(maxsize=None)
+def fibonacci(n):                   # Pure → safe to cache!
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+```

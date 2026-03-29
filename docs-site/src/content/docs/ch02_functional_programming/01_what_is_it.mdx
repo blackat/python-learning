@@ -1,0 +1,64 @@
+---
+title: What is functional programming
+description: What a class is
+---
+
+Functional programming treats computation as the **evaluation of functions** — avoiding shared state and mutable data. Python isn't a pure functional language, but it has excellent functional tools.
+
+Core ideas:
+- **Pure functions** — same input always gives same output, no side effects
+- **Immutability** — don't modify data, create new data
+- **Function composition** — build complex behavior from simple functions
+- **Higher-order functions** — functions that take or return other functions
+
+```python
+# ❌ Imperative style — how to do it
+total = 0
+for x in [1, 2, 3, 4, 5]:
+    if x % 2 == 0:
+        total += x ** 2
+
+# ✅ Functional style — what you want
+from functools import reduce
+total = reduce(lambda acc, x: acc + x,
+               map(lambda x: x**2,
+                   filter(lambda x: x % 2 == 0, [1, 2, 3, 4, 5])))
+
+# ✅ Pythonic functional style — most readable
+total = sum(x**2 for x in [1, 2, 3, 4, 5] if x % 2 == 0)
+```
+
+## Quick Reference
+
+| Concept | Tool | Use case |
+|---|---|---|
+| Transform | `map()`, comprehension | Apply function to every element |
+| Filter | `filter()`, comprehension | Keep elements matching condition |
+| Fold | `reduce()` | Collapse iterable to single value |
+| Fix args | `partial()` | Pre-fill function arguments |
+| Cache | `lru_cache`, `cache` | Memoize pure functions |
+| Overload | `singledispatch` | Type-based dispatch |
+| Fill comparisons | `total_ordering` | Define one, get all |
+| Capture state | Closure | Stateful function factories |
+| Combine functions | Composition | Build pipelines from small functions |
+| Immutability | `NamedTuple`, `frozen=True` | Safe, predictable data |
+| Iteration tools | `itertools` | Efficient, composable iteration |
+
+---
+
+## The Truly Final Complete Advanced Python Journey
+
+| Topic | Status |
+|---|---|
+| OOP & Dunder Methods | ✅ |
+| **Functional Programming** | ✅ |
+| Iterators & Generators | ✅ |
+| Decorators | ✅ |
+| Context Managers | ✅ |
+| Advanced Error Handling | ✅ |
+| Advanced Data Structures | ✅ |
+| Concurrency & Async | ✅ |
+| Metaclasses & Descriptors | ✅ |
+| Memory & Performance | ✅ |
+| Modules & Packaging | ✅ |
+| Type Hints & Static Analysis | ✅ |

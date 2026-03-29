@@ -1,0 +1,74 @@
+---
+title: "itertools: functional iteration"
+description: What a class is
+---
+
+```python
+from itertools import (
+    chain, starmap, compress,
+    takewhile, dropwhile, groupby,
+    accumulate, product, combinations,
+    permutations, combinations_with_replacement,
+    zip_longest, islice, cycle, repeat
+)
+import operator
+
+
+# chain — flatten iterables
+flat = list(chain([1,2], [3,4], [5,6]))         # [1,2,3,4,5,6]
+flat = list(chain.from_iterable([[1,2],[3,4]]))  # Same
+
+
+# starmap — map with argument unpacking
+pairs   = [(2, 3), (4, 5), (10, 2)]
+results = list(starmap(pow, pairs))             # [8, 1024, 100]
+sums    = list(starmap(operator.add, pairs))    # [5, 9, 12]
+
+
+# compress — filter by boolean mask
+data = ["a", "b", "c", "d", "e"]
+mask = [1, 0, 1, 0, 1]
+print(list(compress(data, mask)))               # ['a', 'c', 'e']
+
+
+# takewhile / dropwhile
+nums = [1, 2, 3, 4, 5, 1, 2]
+print(list(takewhile(lambda x: x < 4, nums)))  # [1, 2, 3]  — stops at 4
+print(list(dropwhile(lambda x: x < 4, nums)))  # [4, 5, 1, 2] — skips until 4
+
+
+# groupby — group consecutive elements (sort first!)
+data = [
+    {"name": "Alice", "dept": "Eng"},
+    {"name": "Bob",   "dept": "Eng"},
+    {"name": "Carol", "dept": "HR"},
+    {"name": "Dave",  "dept": "HR"},
+]
+data.sort(key=lambda x: x["dept"])
+
+for dept, members in groupby(data, key=lambda x: x["dept"]):
+    names = [m["name"] for m in members]
+    print(f"{dept}: {names}")
+# Eng: ['Alice', 'Bob']
+# HR:  ['Carol', 'Dave']
+
+
+# accumulate — running totals
+sales   = [100, 250, 175, 300, 225]
+running = list(accumulate(sales))               # [100, 350, 525, 825, 1050]
+running = list(accumulate(sales, operator.mul)) # Running product
+
+
+# Combinatorics
+items = ["A", "B", "C"]
+print(list(combinations(items, 2)))             # [('A','B'),('A','C'),('B','C')]
+print(list(permutations(items, 2)))             # [('A','B'),('A','C'),('B','A')...]
+print(list(product([0,1], repeat=3)))           # All 3-bit binary strings
+
+
+# zip_longest — zip with fill value
+a = [1, 2, 3, 4, 5]
+b = ["a", "b", "c"]
+print(list(zip_longest(a, b, fillvalue=None)))
+# [(1,'a'),(2,'b'),(3,'c'),(4,None),(5,None)]
+```
