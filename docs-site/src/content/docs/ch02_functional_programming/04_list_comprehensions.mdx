@@ -1,0 +1,281 @@
+---
+title: List comprehensions
+description: How stuff works
+---
+
+**List comprehensions** are a Pythonic alternative to `map()` and `filter()` for common cases. Neither is wrong, it's a matter of 
+style and readability. Most Python developers tend to prefer comprehensions for simple transformations, while `map()` and `filter()`
+feel more natural in a **strictly functional style**.
+
+:::note[List comprehension]
+A list comprehension is a **concise, readable way to build a list** from an existing iterable, in a single line. It combines the 
+ideas of `map()` and `filter()` into one compact expression, you can transform elements, filter them, or both, all in one go.
+
+The concept comes from **set-builder notation** in mathematics, where you **<mark>define a set by describing its elements</mark>** rather than 
+listing them explicitly:
+
+```
+{ x² | x ∈ ℕ, x is even }   →   "the square of every even natural number"
+```
+
+Python simply brings that same idea into code.
+:::
+
+```python title=Syntax
+[ <expression> for <item> in <iterable> if <condition> ]
+```
+
+The `if` condition is optional, you only need it when filtering.
+
+```python
+nums = [1, 2, 3, 4, 5, 6]
+
+# map only — transform every element
+squares = [x ** 2 for x in nums]
+print(squares)          # [1, 4, 9, 16, 25, 36]
+
+# filter only — keep matching elements
+evens = [x for x in nums if x % 2 == 0]
+print(evens)            # [2, 4, 6]
+
+# map + filter — transform and filter in one expression
+even_squares = [x ** 2 for x in nums if x % 2 == 0]
+print(even_squares)     # [4, 16, 36]
+```
+
+### How it maps to `map()` and `filter()`
+
+A list comprehension is not a replacement for `map()` and `filter()`, it is a more readable way to express the same idea.
+Under the hood, both approaches do the same work: filter elements, then transform them. **<mark>The comprehension just collapses that into
+a single, natural-reading line</mark>**.
+
+```python
+nums = [1, 2, 3, 4, 5, 6]
+
+# These are equivalent:
+result = list(map(lambda x: x ** 2, filter(lambda x: x % 2 == 0, nums)))
+result = [x ** 2 for x in nums if x % 2 == 0]
+
+# The comprehension reads almost like plain English:
+# "give me x squared, for every x in nums, if x is even"
+```
+
+Here is how both expressions map to the same two steps:
+
+```bash frame=none
+  Input: [1, 2, 3, 4, 5, 6]
+  
+  ═══════════════════════════════════════════════════════════════
+  map() + filter()                  List Comprehension
+  ═══════════════════════════════════════════════════════════════
+
+  filter(lambda x: x % 2 == 0)     if x % 2 == 0
+  ─────────────────────────────     ─────────────
+  [ 1 ] ── False ── ✗               [ 1 ] ── False ── ✗
+  [ 2 ] ── True  ── [ 2 ] ──┐       [ 2 ] ── True  ── [ 2 ] ──┐
+  [ 3 ] ── False ── ✗       │       [ 3 ] ── False ── ✗       │
+  [ 4 ] ── True  ── [ 4 ] ──┤       [ 4 ] ── True  ── [ 4 ] ──┤
+  [ 5 ] ── False ── ✗       │       [ 5 ] ── False ── ✗       │
+  [ 6 ] ── True  ── [ 6 ] ──┤       [ 6 ] ── True  ── [ 6 ] ──┤
+                      │                                │
+  map(lambda x: x**2) │              x ** 2            │
+  ────────────────── ─┤              ──────────────── ─┤
+  [ 2 ] ── (x**2) ── [ 4  ] ──┐     [ 2 ] ── (x**2) ── [ 4  ] ──┐
+  [ 4 ] ── (x**2) ── [ 16 ] ──┤     [ 4 ] ── (x**2) ── [ 16 ] ──┤
+  [ 6 ] ── (x**2) ── [ 36 ] ──┤     [ 6 ] ── (x**2) ── [ 36 ] ──┤
+                              │                                 │
+                        [4, 16, 36]                         [4, 16, 36]
+```
+
+:::note[How it works]
+Same steps, same result, the comprehension simply reads left to right as a single expression rather than nested function calls from 
+the inside out.
+:::
+
+### Beyond Lists — Dict and Set Comprehensions
+
+The same idea extends to other collections. The syntax is almost identical, only the **brackets and structure** change to reflect
+the collection type. Sets use curly braces and store unique values only, while dicts use curly braces with a `key: value` pair 
+to build a mapping.
+
+```python
+nums = [1, 2, 3, 4, 5]
+
+# Set comprehension — curly braces, no duplicates
+squares_set = {x ** 2 for x in nums}
+print(squares_set)      # {1, 4, 9, 16, 25}
+
+# Dict comprehension — key: value pairs
+squares_dict = {x: x ** 2 for x in nums}
+print(squares_dict)     # {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+```
+
+Here is how they work:
+
+```bash frame=none
+  Input: [1, 2, 3, 4, 5].   ← input list
+  
+  ═══════════════════════════════════════════════════════════════════
+  List comprehension        Set comprehension     Dict comprehension
+  [x ** 2 for x in nums]   {x ** 2 for x in nums}  {x: x**2 for x in nums}
+  ═══════════════════════════════════════════════════════════════════
+
+  [ 1 ] ── (x**2) ──  1        1  (unique)          1 ──► 1
+  [ 2 ] ── (x**2) ──  4        4  (unique)          2 ──► 4
+  [ 3 ] ── (x**2) ──  9        9  (unique)          3 ──► 9
+  [ 4 ] ── (x**2) ── 16       16  (unique)          4 ──► 16
+  [ 5 ] ── (x**2) ── 25       25  (unique)          5 ──► 25
+                      │             │                      │
+                      ▼             ▼                      ▼
+               [1, 4, 9,      {1, 4, 9,          {1:1,  2:4,  3:9,
+                16, 25]        16, 25}             4:16, 5:25}
+
+  ordered           unordered, no duplicates     key: value pairs
+  bracket []        curly braces {}              curly braces {key: value}
+```
+
+The uniqueness of sets becomes relevant when your input contains **<mark>duplicates</mark>**, a set comprehension 
+silently discards them, while a list comprehension keeps them all:
+
+```python
+# input list
+nums = [1, 2, 2, 3, 3, 3]
+
+print([x ** 2 for x in nums])     # [1, 4, 4, 9, 9, 9]   ← duplicates kept
+print({x ** 2 for x in nums})     # {1, 4, 9}            ← duplicates dropped
+```
+
+### One Important Difference from `map()` and `filter()`
+
+:::danger[list comprehensions are **not lazy**]
+Unlike `map()` and `filter()`, list comprehensions are **not lazy**, they evaluate immediately and return a full list in memory.
+
+If you need laziness, Python offers **generator expressions**, which use the same syntax but with parentheses instead of brackets:
+
+```python
+# List comprehension — evaluates immediately, all in memory
+eager  = [x ** 2 for x in range(1_000_000)]        # 1M values in RAM
+
+# Generator expression — lazy, one value at a time
+lazy   = (x ** 2 for x in range(1_000_000))         # nothing computed yet
+
+print(next(lazy))       # 0   ← pulls one value on demand
+print(next(lazy))       # 1
+print(next(lazy))       # 4
+```
+:::
+
+### Final thoughs
+
+Python offers list comprehensions as a more readable alternative for `map` and `filter`. Both are valid, **<mark>the choice is largely 
+stylistic</mark>**:
+
+| Goal | `map` / `filter` | Comprehension |
+|---|---|---|
+| Transform | `map(lambda x: x**2, nums)` | `[x**2 for x in nums]` |
+| Filter | `filter(lambda x: x>3, nums)` | `[x for x in nums if x>3]` |
+| Both | `map(..., filter(..., nums))` | `[x**2 for x in nums if x>3]` |
+| Reduce | `reduce(lambda a,x: a+x, nums)` | No direct equivalent |
+
+`reduce()` has no comprehension equivalent, it remains the go-to tool whenever you **<mark>need to collapse a collection into 
+a single value</mark>**.
+
+### Trio vs. comprehension
+
+```python title="Trio"
+from functools import reduce
+
+nums = [1, 2, 3, 4, 5]
+
+
+# map(func, iterable) — transform every element
+squared  = list(map(lambda x: x**2, nums))
+strings  = list(map(str, nums))             # Built-in functions work too
+print(squared)      # [1, 4, 9, 16, 25]
+print(strings)      # ['1', '2', '3', '4', '5']
+
+# map with multiple iterables
+a = [1, 2, 3]
+b = [10, 20, 30]
+sums = list(map(lambda x, y: x + y, a, b))
+print(sums)         # [11, 22, 33]
+
+
+# filter(func, iterable) — keep elements where func returns True
+evens    = list(filter(lambda x: x % 2 == 0, nums))
+positives = list(filter(None, [-1, 0, 2, None, 3, ""]))  # None removes falsy
+print(evens)        # [2, 4]
+print(positives)    # [-1, 2, 3]
+
+
+# reduce(func, iterable) — fold iterable into single value
+total   = reduce(lambda acc, x: acc + x, nums)      # 15
+product = reduce(lambda acc, x: acc * x, nums)      # 120
+maximum = reduce(lambda a, b: a if a > b else b, nums)  # 5
+
+# With initial value
+total = reduce(lambda acc, x: acc + x, nums, 100)   # 115 (starts at 100)
+
+print(total, product, maximum)
+```
+
+```python title="Comprehension"
+# Python idiom — prefer comprehensions over map/filter for readability
+# These are equivalent:
+squared = list(map(lambda x: x**2, nums))
+squared = [x**2 for x in nums]                      # ← more Pythonic
+
+evens = list(filter(lambda x: x % 2 == 0, nums))
+evens = [x for x in nums if x % 2 == 0]            # ← more Pythonic
+
+# But map/filter can be cleaner with existing named functions
+strings = list(map(str, nums))                      # Clean — no lambda needed
+```
+
+## Gotchas
+
+List comprehensions return a **fully evaluated list** immediately, no laziness, everything computed upfront and stored in memory.
+
+```python
+# input list
+nums = [1, 2, 3, 4, 5]
+
+lazy  = map(lambda x: x ** 2, nums)       # <map object>  — not computed yet
+eager = [x ** 2 for x in nums]            # [1, 4, 9, 16, 25] — computed immediately
+
+print(type(lazy))       # <class 'map'>
+print(type(eager))      # <class 'list'>
+```
+
+```bash frame=none
+  Input: [1, 2, 3, 4, 5]
+
+  ═══════════════════════════════════════════════════════════════
+  map()  — lazy                     List Comprehension — eager
+  ═══════════════════════════════════════════════════════════════
+
+  map(lambda x: x**2, nums)         [x**2 for x in nums]
+  
+  returns immediately ──►  <map object>     returns immediately ──► [1, 4, 9, 16, 25]
+                               │                                          │
+                          nothing computed                        fully computed
+                          values sit waiting                      all in memory
+                               │
+                          only computes
+                          when consumed
+                               │
+                 next() ──► 1  (rest still waiting)
+                 next() ──► 4  (rest still waiting)
+                 next() ──► 9  (rest still waiting)
+                 ...
+
+  ═══════════════════════════════════════════════════════════════
+  Memory cost         one value at a time        all N values at once
+  Best when           large data, early exit      small data, need all values
+  ═══════════════════════════════════════════════════════════════
+```
+
+So the key difference is:
+
+- `map()` and `filter()`: **lazy**, compute on demand, memory efficient
+- List comprehension: **eager**, computes everything immediately, returns a plain `list`

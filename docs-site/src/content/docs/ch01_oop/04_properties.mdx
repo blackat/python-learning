@@ -330,6 +330,7 @@ class Temperature:
 ```
 
 `_celsius` is the single source of truth — all three properties read from and write to it. The `celsius` setter validates the value before storing it. The `fahrenheit` and `kelvin` setters convert to Celsius and delegate storage to `_celsius` directly — bypassing the setter to avoid double conversion.
+
 ```python title="test_exercise_02_01.py"
 import pytest
 from exercises.ch01_oop.exercise_02_01 import Temperature

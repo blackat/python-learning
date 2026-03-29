@@ -1,0 +1,187 @@
+---
+title: Exercises - map(), filter(), reduce()
+description: Go deep
+---
+
+## Exercises
+
+### `map()` Exercises
+
+#### Exercise 2.4.1 <span class="badge green">Beginner</span>
+
+Given a list of temperatures in Celsius, convert them all to Fahrenheit.
+
+```python
+celsius = [0, 10, 20, 30, 40]
+# expected output: [32.0, 50.0, 68.0, 104.0]
+# formula: (c * 9/5) + 32
+```
+
+<details class="exercise">
+<summary>Solution</summary>
+
+<div>
+```python title="exercise_2_4_1.py"
+def celsius_to_fahrenheit(celsius):
+    # return a lazy iterator
+    return map(lambda x: (x * 9 / 5) + 32, celsius)
+```
+
+```python title="test_exercise_2_4_1.py"
+from exercises.ch02_funcp.exercise_2_4_1 import celsius_to_fahrenheit
+
+
+def test_celsius_to_fahrenheit():
+
+    celsius = [0, 10, 20, 30, 40]
+
+    # lazy returned collection
+    ret_map = celsius_to_fahrenheit(celsius)
+
+    # list will force lazy collection to evaluate
+    assert list(ret_map) == [32.0, 50.0, 68.0, 86.0, 104.0]
+```
+</div>
+
+</details>
+
+
+#### Exercise 2.4.2 <span class="badge green">Beginner</span>
+
+Given a list of names, return them all in uppercase.
+
+```python
+names = ["alice", "bob", "charlie", "diana"]
+# expected output: ['ALICE', 'BOB', 'CHARLIE', 'DIANA']
+```
+
+<details class="exercise">
+<summary>Solution</summary>
+
+<div>
+```python title="exercise_2_4_2.py"
+from typing import Iterator
+
+def capitalise_names(names: list[str]) -> Iterator[str]:
+    return map(lambda n: n.upper(), names)
+
+```
+
+```python title="test_exercise_2_4_2.py"
+from exercises.ch02_funcp.exercise_2_4_2 import capitalise_names
+
+def test_capitalise_names():
+
+    names = ["alice", "bob", "charlie", "diana"]
+
+    # lazy returned collection
+    lazy = capitalise_names(names)
+
+    # list will force lazy collection to evaluate
+    assert list(lazy) == ["ALICE", "BOB", "CHARLIE", "DIANA"]
+
+```
+</div>
+
+</details>
+
+#### Exercise 2.4.3 <span class="badge yellow">Intermediate</span>
+
+Given two lists of numbers, return a list of their products paired by position.
+
+```python
+a = [1, 2, 3, 4]
+b = [10, 20, 30, 40]
+# expected output: [10, 40, 90, 160]
+# hint: map() can take two iterables
+```
+
+### `filter()` Exercises
+
+#### Exercise 2.4.4 <span class="badge green">Beginner</span>
+
+Given a list of numbers, return only the odd ones.
+```python
+nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+# expected output: [1, 3, 5, 7, 9]
+```
+
+#### Exercise 2.4.5 <span class="badge green">Beginner</span>
+
+Given a list of words, return only the words longer than 4 characters.
+```python
+words = ["cat", "elephant", "dog", "butterfly", "ant", "bear"]
+# expected output: ['elephant', 'butterfly']
+```
+
+#### Exercise 2.4.6 <span class="badge yellow">Intermediate</span>
+
+Given a list that contains some `None` values, return only the valid (non-None) values.
+```python
+data = [1, None, 3, None, 5, None, 7]
+# expected output: [1, 3, 5, 7]
+# hint: filter() with None as the function removes falsy values
+```
+
+---
+
+### `reduce()` Exercises
+
+#### Exercise 2.4.7 <span class="badge yellow">Intermediate</span>
+
+Given a list of numbers, find the maximum value using `reduce()` — without using `max()`.
+```python
+from functools import reduce
+nums = [3, 1, 4, 1, 5, 9, 2, 6]
+# expected output: 9
+```
+
+#### Exercise 2.4.8 <span class="badge yellow">Intermediate</span>
+
+Given a list of words, join them into a single sentence using `reduce()` — without using `join()`.
+```python
+from functools import reduce
+words = ["Python", "is", "fun", "to", "learn"]
+# expected output: 'Python is fun to learn'
+```
+
+#### Exercise 2.4.9 <span class="badge red">Advanced</span>
+
+Given a list of lists, flatten it into a single list using `reduce()`.
+```python
+from functools import reduce
+nested = [[1, 2], [3, 4], [5, 6], [7, 8]]
+# expected output: [1, 2, 3, 4, 5, 6, 7, 8]
+```
+
+---
+
+### Combined Exercises
+
+#### Exercise 2.4.10 <span class="badge red">Advanced</span>
+
+Given a list of numbers, find the sum of the squares of all odd numbers.
+```python
+from functools import reduce
+nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+# expected output: 165  (1 + 9 + 25 + 49 + 81)
+```
+
+#### Exercise 2.4.11 <span class="badge red">Advanced</span>
+
+Given a list of products, calculate the total price of only the items that are in stock.
+```python
+from functools import reduce
+products = [
+    {"name": "apple",  "price": 1.5,  "in_stock": True},
+    {"name": "banana", "price": 0.5,  "in_stock": False},
+    {"name": "cherry", "price": 3.0,  "in_stock": True},
+    {"name": "date",   "price": 5.0,  "in_stock": True},
+    {"name": "elder",  "price": 2.0,  "in_stock": False},
+]
+# expected output: 9.5  (1.5 + 3.0 + 5.0)
+```
+
+---
+
+Try solving each one using `lambda` functions first, then see if a named `def` function makes it cleaner for the more complex ones.

@@ -1,0 +1,212 @@
+---
+title: Internals
+description: How stuff works
+---
+
+## Where lazy iterators keep data?
+
+When you write this:
+
+```python
+nums = [1, 2, 3, 4, 5]
+lazy = map(lambda x: x ** 2, nums)
+```
+
+`lazy` does **<mark>not</mark>** contain any data. It contains only two things:
+
+```bash frame=none
+lazy (map object)
+├── a reference to the function   → lambda x: x ** 2
+└── a reference to the iterator  → nums (the list)
+```
+
+Think of it as a **<mark>recipe</mark>**, not a meal. It knows what to do and where the ingredients are, but it hasn't cooked 
+anything yet.
+
+```bash frame=none
+  nums (list)                lazy (map object)
+  ───────────                ─────────────────
+  [ 1 ]  ◄─────────────────── pointer to nums
+  [ 2 ]                        pointer to function
+  [ 3 ]                        internal cursor ──► position 0
+  [ 4 ]
+  [ 5 ]
+  (data lives here)           (no data here, just references)
+```
+
+When you call `next(lazy)`, here is what happens step by step:
+
+```bash frame=none
+  next(lazy)
+      │
+      ├── 1. move cursor to position 0 in nums   → reads [ 1 ]
+      ├── 2. applies function                     → 1 ** 2 = 1
+      ├── 3. returns 1
+      └── 4. cursor advances to position 1
+
+  next(lazy)
+      │
+      ├── 1. cursor is at position 1 in nums      → reads [ 2 ]
+      ├── 2. applies function                     → 2 ** 2 = 4
+      ├── 3. returns 4
+      └── 4. cursor advances to position 2
+
+  ... and so on
+```
+
+The data **<mark>always lives in the original list</mark>**, the map object just holds a cursor that moves through it:
+
+```python
+nums = [1, 2, 3, 4, 5]
+lazy = map(lambda x: x ** 2, nums)
+
+# the data is always in nums
+print(nums)         # [1, 2, 3, 4, 5]  ← still here, untouched
+
+# lazy just knows where it is and what to do
+print(next(lazy))   # 1   ← reads nums[0], applies function
+print(next(lazy))   # 4   ← reads nums[1], applies function
+print(next(lazy))   # 9   ← reads nums[2], applies function
+
+# cursor is now at position 3
+# nums[0], nums[1], nums[2] were read but never stored by lazy
+```
+
+This is also why it is **<mark>exhausted once</mark>**, **the cursor only moves forward**, and once it reaches the end there is no 
+way to reset it:
+
+```bash frame=none
+  Before:   cursor ──► [ 1 ][ 2 ][ 3 ][ 4 ][ 5 ]
+  After 3x next():     [ 1 ][ 2 ][ 3 ] cursor ──► [ 4 ][ 5 ]
+  Exhausted:           [ 1 ][ 2 ][ 3 ][ 4 ][ 5 ] cursor ──► (end) ❌
+```
+
+:::note[`map` only reads from a list]
+And this is why the **original list is never affected**, `map` only reads from it, never modifies it. 
+You can always create a fresh map object from the same list, because the list still has all its data intact.
+:::
+
+## Generator Expressions
+
+A generator expression is the **<mark>lazy equivalent of a list comprehension</mark>**, same syntax, but with parentheses `()` 
+instead of brackets `[]`. It returns a **generator object** that computes values on demand, exactly like `map()` and `filter()`.
+
+```python
+nums = [1, 2, 3, 4, 5]
+
+list_comp = [x ** 2 for x in nums]         # list comprehension — eager
+gen_expr  = (x ** 2 for x in nums)         # generator expression — lazy
+
+print(type(list_comp))      # <class 'list'>
+print(type(gen_expr))       # <class 'generator'>
+```
+
+```bash frame=none
+  Input: [1, 2, 3, 4, 5]
+
+  ═══════════════════════════════════════════════════════════════════
+  List Comprehension        Generator Expression        map()
+  [x**2 for x in nums]      (x**2 for x in nums)        map(lambda x: x**2, nums)
+  ═══════════════════════════════════════════════════════════════════
+
+  returns ──► [1, 4, 9,     returns ──► <generator>     returns ──► <map object>
+               16, 25]                      │                            │
+                  │                    nothing computed             nothing computed
+          fully in memory              values waiting               values waiting
+                                            │                            │
+                                  next() ──► 1                 next() ──► 1
+                                  next() ──► 4                 next() ──► 4
+                                  next() ──► 9                 next() ──► 9
+
+  ═══════════════════════════════════════════════════════════════════
+  Syntax        [x**2 for x in nums]   (x**2 for x in nums)   map(lambda x: x**2, nums)
+  Returns       list                   generator               map object
+  Lazy          ❌ No                  ✅ Yes                  ✅ Yes
+  Pythonic      ✅ Yes                 ✅ Yes                  ⚠️ Debated
+  ═══════════════════════════════════════════════════════════════════
+```
+
+```python
+nums = [1, 2, 3, 4, 5]
+gen  = (x ** 2 for x in nums)
+
+print(next(gen))        # 1
+print(next(gen))        # 4
+print(next(gen))        # 9
+# 16 and 25 never computed if we stop here
+```
+:::note[Practical rule of thumb]
+
+- Use a **list comprehension** `[]` when you need all values and will access them multiple times
+- Use a **generator expression** `()` when you only need to iterate once, or may stop early
+- Use **`map()`** when you are already working in a functional style with lambdas or named functions
+:::
+
+### Generator Object
+
+A generator object is a special Python object that **produces values one at a time, on demand, without storing them all in memory**.
+It remembers where it left off between calls, each time you ask for the next value, it resumes from where it paused.
+
+The key word is **`yield`**, it's what makes a function a generator. Unlike `return` which exits the function, 
+`yield` **pauses** it and hands back a value, keeping the function's state intact for the next call.
+
+```python
+# A regular function — computes and returns everything at once
+def regular_squares(nums):
+    results = []
+    for x in nums:
+        results.append(x ** 2)
+    return results                      # returns a complete list
+
+# A generator function — yields one value at a time
+def gen_squares(nums):
+    for x in nums:
+        yield x ** 2                    # pauses here, hands back one value
+                                        # resumes from here on next call
+```
+
+```bash frame=none
+  gen_squares([1, 2, 3, 4, 5])
+
+  ═══════════════════════════════════════════════════════════════
+  Call              Inside the function         Returns
+  ═══════════════════════════════════════════════════════════════
+
+  gen = gen_squares(nums)    (not started yet)    <generator object>
+                                    │
+  next(gen)          x=1 ── yield 1 ── ⏸ paused       1
+                                    │
+  next(gen)          x=2 ── yield 4 ── ⏸ paused       4
+                                    │
+  next(gen)          x=3 ── yield 9 ── ⏸ paused       9
+                                    │
+  next(gen)          x=4 ── yield 16 ── ⏸ paused      16
+                                    │
+  next(gen)          x=5 ── yield 25 ── ⏸ paused      25
+                                    │
+  next(gen)          (nothing left) ── StopIteration ❌
+  ═══════════════════════════════════════════════════════════════
+```
+
+```python
+gen = gen_squares([1, 2, 3, 4, 5])
+
+print(type(gen))        # <class 'generator'>
+
+print(next(gen))        # 1  ← resumes, computes x=1, pauses
+print(next(gen))        # 4  ← resumes, computes x=2, pauses
+print(next(gen))        # 9  ← resumes, computes x=3, pauses
+
+# 16 and 25 are never computed if we stop here
+```
+
+:::caution[Generators are exhausted once]
+Unlike a list, a generator can only be consumed **once**. Once all values have been yielded, it is empty:
+
+```python
+gen = gen_squares([1, 2, 3])
+
+print(list(gen))        # [1, 4, 9]  ← consumes everything
+print(list(gen))        # []         ← nothing left, already exhausted
+```
+:::
