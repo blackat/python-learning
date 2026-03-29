@@ -3,9 +3,555 @@ title: map(), filter(), reduce()
 description: What a class is
 ---
 
-The classic functional trio:
+:::note[Classic trio]
+These three functions are the **classic trio of functional programming**, they are the building blocks for **<mark>processing collections 
+of data without loops</mark>**. They each take **a function and an iterable** (a list, for example) and apply that function to the 
+data in a specific way:
+
+- **`map`**: *transform* every element
+- **`filter`**: *select* only elements that meet a condition
+- **`reduce`**: *collapse* all elements into a single value
+
+The idea is to describe **<mark>what</mark>** you want done to the data, and **let the function handle the iteration for you**. 
+This is the declarative spirit of functional programming. All three originate from functional languages like Lisp and Haskell, 
+and have since been adopted widely across modern languages.
+:::
+
+In Python, `map()` and `filter()` are built-in, while `reduce()` lives in the `functools` module. All three return 
+**<mark>lazy iterators</mark>** in Python 3, meaning they **don't compute results until needed**, which is memory efficient.
+
+:::danger[Immediate evaluation]
+Wrapping them in `list()` forces immediate evaluation.
+
+```python title="Lazy vs. immediate"
+nums = [1, 2, 3, 4, 5]
+
+# map() returns a lazy iterator — nothing is computed yet
+lazy_result = map(lambda x: x ** 2, nums)
+print(lazy_result)          # <map object at 0x10f3a2d30>  ← not the values!
+
+# Wrapping in list() forces it to evaluate immediately
+eager_result = list(map(lambda x: x ** 2, nums))
+print(eager_result)         # [1, 4, 9, 16, 25]  ← actual values
+```
+
+The **<mark>lazy iterator</mark>** is like a set of instructions that sits and waits: it knows *how* to compute the squares, but 
+hasn't done it yet. Only when you consume it (via `list()`, a `for` loop, or similar) does it actually run.
+
+```python title="Force evaluation"
+# Other ways to force evaluation
+nums = [1, 2, 3, 4, 5]
+lazy = map(lambda x: x ** 2, nums)
+
+# Via a for loop
+for val in lazy:
+    print(val)              # 1, 4, 9, 16, 25 — computed one at a time
+
+# Via next() — one value at a time
+lazy = map(lambda x: x ** 2, nums)
+print(next(lazy))           # 1
+print(next(lazy))           # 4
+print(next(lazy))           # 9
+```
+
+The practical benefit is **memory efficiency**: if you have a million items, a lazy iterator doesn't load them all at once.
+It produces each value only when asked. 
+
+Wrapping in `list()` is convenient but trades that efficiency for **immediate access** to all values.
+
+#### Watch out
+The `for` loop does begin forcing evaluation from the start, and it could stop early because you have put a `break`. It's not a clean 
+demonstration of laziness because you're relying on break to stop it, if you forgot the `break`, it would evaluate all 1,000,000 
+values.
+
+Whereas with `next()` and `filter()`, the **laziness is structural**, there is no loop that could accidentally run away.
+You explicitly pull one value at a time, and nothing else is ever evaluated unless you ask for it.
+:::
+
+<details class="deeper">
+<summary>**Under the hood: realistic scenarios**</summary>
+
+<div>
+```python title="Need 5 out of a million"
+# Simulating a very large dataset
+def million_numbers():
+    for i in range(1_000_000):
+        yield i
+
+# ❌ list() — loads ALL 1,000,000 squares into memory at once
+eager = list(map(lambda x: x ** 2, million_numbers()))     # 1M values sitting in RAM
+
+# ✅ lazy — computes one value at a time, only when needed
+lazy = map(lambda x: x ** 2, million_numbers())
+
+# next() pulls exactly one value at a time — the remaining 999,995 are never touched
+print(next(lazy))   # 0
+print(next(lazy))   # 1
+print(next(lazy))   # 4
+print(next(lazy))   # 9
+print(next(lazy))   # 16
+```
+
+Each `next()` call evaluates exactly one item on demand. The iterator simply sits and waits between calls. This is the purest 
+demonstration of **lazy evaluation**: compute only what you explicitly ask for, nothing more.
+
+```python title="Searching a large log file"
+def read_logs():
+    for i in range(1_000_000):
+        print(f"  generating line {i}...")          # shows exactly what gets evaluated
+        yield f"LOG {i}: user_action=click, status={'error' if i == 357 else 'ok'}"
+
+logs = read_logs()
+errors = filter(lambda log: "error" in log, logs)
+
+first_error = next(errors)
+print(first_error)
+
+# Output:
+#   generating line 0...
+#   generating line 1...
+#   generating line 2...
+#   ... (every line up to 357 is checked by filter)
+#   generating line 357...
+# LOG 357: user_action=click, status=error
+# ← stops here, lines 358–999,999 never generated
+```
+
+The only nuance worth noting is that lines `0–356` are evaluated, the filter has to check each one and reject it before reaching 357.
+So it's not that only one line is processed, but rather that the pipeline stops **as early as possible** the moment the condition is met.
+
+The key insight is:
+
+| | `list(map(...))` | lazy `map(...)` |
+|---|---|---|
+| Memory used | All N items at once | One item at a time |
+| Computation | Everything upfront | Only what is consumed |
+| Best when | You need all results | You may stop early |
+
+Laziness is most valuable when your data is **large** and you only need **part of it**: why compute a million squares if you only needed the first five?
+</div>
+</details>
+
+### `map(func, iterable)` — Transform Every Element
+
+`map()` takes a function and an iterable, and applies the function to **every element** in the iterable. 
+It doesn't modify the original, it returns a **<mark>new lazy iterator</mark>** with the transformed values.
+
+**Think of it as an assembly line**: each item passes through the same operation and comes out the other side changed. Each 
+element passes through the same function, one at a time, independently of the others, exactly like items on an assembly line going
+through the same machine.
+
+```bash title="The assembly line"
+  map(lambda x: x ** 2, [1, 2, 3, 4, 5])
+
+  Input                Function              Output
+  ─────                ────────              ──────
+
+  [ 1 ] ──────────── (x => x ** 2) ──────── [ 1  ]
+  [ 2 ] ──────────── (x => x ** 2) ──────── [ 4  ]
+  [ 3 ] ──────────── (x => x ** 2) ──────── [ 9  ]
+  [ 4 ] ──────────── (x => x ** 2) ──────── [ 16 ]
+  [ 5 ] ──────────── (x => x ** 2) ──────── [ 25 ]
+
+  [1, 2, 3, 4, 5]                           [1, 4, 9, 16, 25]
+  original unchanged                         new iterator
+```
+
+Here the Python code:
 
 ```python
+nums = [1, 2, 3, 4, 5]
+
+# map(func, iterable) — transform every element
+squared = list(map(lambda x: x ** 2, nums))
+strings = list(map(str, nums))              # built-in functions work too
+
+print(squared)      # [1, 4, 9, 16, 25]
+print(strings)      # ['1', '2', '3', '4', '5']
+```
+
+:::note[Lazy iterator]
+It returns neither a list nor an array: it returns a **`map` object**, which is a **<mark>lazy iterator</mark>**. 
+You can verify this directly:
+
+```python
+nums = [1, 2, 3, 4, 5]
+
+result = map(lambda x: x ** 2, nums)
+print(result)           # <map object at 0x10f3a2d30>  ← not a list!
+print(type(result))     # <class 'map'>
+```
+
+You only get a list if you **explicitly ask for one** by wrapping it in `list()`:
+
+```python
+result = list(map(lambda x: x ** 2, nums))
+print(result)           # [1, 4, 9, 16, 25]  ← now it's a list
+print(type(result))     # <class 'list'>
+```
+
+This is a Python 3 behaviour worth knowing. In **Python 2**, `map()` did return a list directly, but Python 3 changed it to return 
+a lazy iterator for **memory efficiency**, as we covered earlier. So the wrapping in `list()` is not just a convention, it's a 
+necessary step if you actually want a list back.
+:::
+
+### `filter(func, iterable)` — Select Matching Elements
+
+`filter()` takes a function and an iterable, and tests **every element** against the function. Only elements where the function 
+returns `True` pass through, the rest are discarded.
+
+Unlike `map()` which transforms every element, `filter()` makes a **yes/no decision on each one**, acting like a **<mark>gatekeeper</mark>**
+that only lets certain items through.
+
+**Think of it as:** *"keep only the items that pass this test."*
+
+```
+  filter(lambda x: x % 2 == 0, [1, 2, 3, 4, 5, 6])
+
+  Input        Test (x % 2 == 0)      Output
+  ─────        ─────────────────      ──────
+
+  [ 1 ] ───────── False ───────────── ✗ discarded
+  [ 2 ] ───────── True  ───────────── [ 2 ] ──┐
+  [ 3 ] ───────── False ───────────── ✗ discarded
+  [ 4 ] ───────── True  ───────────── [ 4 ] ──┤
+  [ 5 ] ───────── False ───────────── ✗ discarded
+  [ 6 ] ───────── True  ───────────── [ 6 ] ──┤
+                                              │
+  [1, 2, 3, 4, 5, 6]                    [2, 4, 6]
+  original unchanged                    new iterator
+```
+
+Each element faces the same test, it either passes and is kept, or fails and is dropped. **The order of the surviving elements is 
+always preserved.**
+
+Here the Python code:
+
+```python
+nums = [1, 2, 3, 4, 5, 6]
+
+# filter(func, iterable) — keep only elements where func returns True
+evens    = list(filter(lambda x: x % 2 == 0, nums))
+above_3  = list(filter(lambda x: x > 3, nums))
+
+print(evens)        # [2, 4, 6]
+print(above_3)      # [4, 5, 6]
+```
+
+### `reduce(func, iterable)` — Collapse to a Single Value
+
+`reduce()` takes a function and an iterable, and **folds** all elements into a single result by repeatedly applying the function to
+pairs of values. It carries an **<mark>accumulator</mark>**, a running result that gets updated with each element until the list is
+exhausted.
+
+Unlike `map()` and `filter()` which preserve the shape of the collection, `reduce()` **<mark>collapses it entirely</mark>**, like a
+snowball rolling down a hill, growing with each step until there is nothing left to consume.
+
+**Think of it as:** *"fold all items together into one result."*
+
+```
+  reduce(lambda acc, x: acc + x, [1, 2, 3, 4, 5])
+
+  Step     Accumulator      Next Element        Result
+  ────     ───────────      ────────────        ──────
+
+   1          [ 1 ]    +        [ 2 ]     =     [ 3 ]
+   2          [ 3 ]    +        [ 3 ]     =     [ 6 ]
+   3          [ 6 ]    +        [ 4 ]     =     [ 10 ]
+   4          [ 10 ]   +        [ 5 ]     =     [ 15 ]
+                                                  │
+                                                  ▼
+                                            single value
+                                               [ 15 ]
+```
+
+The first element always seeds the accumulator, `reduce()` then walks through the remaining elements one by one, combining each with
+the running total until only one value remains.
+
+:::note[]
+Repeatedly applies a function to **pairs of elements**, accumulating a single final result. Unlike `map` and `filter`, it doesn't
+return a collection, it returns **one value**.
+:::
+
+```python
+from functools import reduce
+
+nums = [1, 2, 3, 4, 5]
+
+# reduce(func, iterable) — accumulate into a single value
+total   = reduce(lambda acc, x: acc + x, nums)   # sum
+product = reduce(lambda acc, x: acc * x, nums)   # product
+
+print(total)        # 15
+print(product)      # 120
+```
+
+The accumulation happens step by step:
+```
+[1, 2, 3, 4, 5]
+ 1+2 → 3
+     3+3 → 6
+         6+4 → 10
+              10+5 → 15
+```
+
+### The Trio Together
+
+They compose naturally, you can chain them to build expressive data pipelines:
+
+```python
+from functools import reduce
+
+nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+# Sum of squares of even numbers
+result = reduce(
+    lambda acc, x: acc + x,
+    map(lambda x: x ** 2,
+        filter(lambda x: x % 2 == 0, nums))
+)
+
+print(result)       # 220  (4 + 16 + 36 + 64 + 100)
+```
+
+:::note[Step by step explanation]
+```
+  Input: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  
+  ═══════════════════════════════════════════════════
+  STEP 1 — filter(lambda x: x % 2 == 0, nums)
+  ═══════════════════════════════════════════════════
+
+  [ 1 ] ── False ── ✗
+  [ 2 ] ── True  ── [ 2 ] ───┐
+  [ 3 ] ── False ── ✗        │
+  [ 4 ] ── True  ── [ 4 ] ───┤
+  [ 5 ] ── False ── ✗        │
+  [ 6 ] ── True  ── [ 6 ] ───┤
+  [ 7 ] ── False ── ✗        │
+  [ 8 ] ── True  ── [ 8 ] ───┤
+  [ 9 ] ── False ── ✗        │
+  [ 10 ] ── True ── [ 10 ] ──┤
+                             │
+                      [2, 4, 6, 8, 10]
+                             │
+                             ▼
+  ═══════════════════════════════════════════════════
+  STEP 2 — map(lambda x: x ** 2, ...)
+  ═══════════════════════════════════════════════════
+
+  [ 2  ] ── (x ** 2) ── [ 4   ] ───┐
+  [ 4  ] ── (x ** 2) ── [ 16  ] ───┤
+  [ 6  ] ── (x ** 2) ── [ 36  ] ───┤
+  [ 8  ] ── (x ** 2) ── [ 64  ] ───┤
+  [ 10 ] ── (x ** 2) ── [ 100 ] ───┤
+                                   │
+                          [4, 16, 36, 64, 100]
+                                   │
+                                   ▼
+  ═══════════════════════════════════════════════════
+  STEP 3 — reduce(lambda acc, x: acc + x, ...)
+  ═══════════════════════════════════════════════════
+
+  Step    Accumulator      Next         Result
+  ────    ───────────      ────         ──────
+   1         [ 4 ]    +   [ 16  ]  =   [ 20  ]
+   2         [ 20 ]   +   [ 36  ]  =   [ 56  ]
+   3         [ 56 ]   +   [ 64  ]  =   [ 120 ]
+   4         [ 120 ]  +   [ 100 ]  =   [ 220 ]
+                                          │
+                                          ▼
+                                    single value
+                                       [ 220 ]
+```
+
+The three steps form a **pipeline**, each step feeds directly into the next, and **<mark>no intermediate list</mark>** is ever fully
+materialised in memory. Data flows through `filter` → `map` → `reduce` **<mark>lazily</mark>**, **one element at a time**.
+:::
+
+
+### Compared to List Comprehensions
+
+**List comprehensions** are a Pythonic alternative to `map()` and `filter()` for common cases. Neither is wrong, it's a matter of 
+style and readability. Most Python developers tend to prefer comprehensions for simple transformations, while `map()` and `filter()`
+feel more natural in a **strictly functional style**.
+
+:::note[List comprehension]
+A list comprehension is a **concise, readable way to build a list** from an existing iterable, in a single line. It combines the 
+ideas of `map()` and `filter()` into one compact expression, you can transform elements, filter them, or both, all in one go.
+
+The concept comes from **set-builder notation** in mathematics, where you **<mark>define a set by describing its elements</mark>** rather than 
+listing them explicitly:
+
+```
+{ x² | x ∈ ℕ, x is even }   →   "the square of every even natural number"
+```
+
+Python simply brings that same idea into code.
+:::
+
+```python title=Syntax
+[ <expression> for <item> in <iterable> if <condition> ]
+```
+
+The `if` condition is optional, you only need it when filtering.
+
+```python
+nums = [1, 2, 3, 4, 5, 6]
+
+# map only — transform every element
+squares = [x ** 2 for x in nums]
+print(squares)          # [1, 4, 9, 16, 25, 36]
+
+# filter only — keep matching elements
+evens = [x for x in nums if x % 2 == 0]
+print(evens)            # [2, 4, 6]
+
+# map + filter — transform and filter in one expression
+even_squares = [x ** 2 for x in nums if x % 2 == 0]
+print(even_squares)     # [4, 16, 36]
+```
+
+### How it maps to `map()` and `filter()`
+
+A list comprehension is not a replacement for `map()` and `filter()`, it is a more readable way to express the same idea.
+Under the hood, both approaches do the same work: filter elements, then transform them. **<mark>The comprehension just collapses that into
+a single, natural-reading line</mark>**.
+
+```python
+nums = [1, 2, 3, 4, 5, 6]
+
+# These are equivalent:
+result = list(map(lambda x: x ** 2, filter(lambda x: x % 2 == 0, nums)))
+result = [x ** 2 for x in nums if x % 2 == 0]
+
+# The comprehension reads almost like plain English:
+# "give me x squared, for every x in nums, if x is even"
+```
+
+Here is how both expressions map to the same two steps:
+
+```bash frame=none
+  Input: [1, 2, 3, 4, 5, 6]
+  
+  ═══════════════════════════════════════════════════════════════
+  map() + filter()                  List Comprehension
+  ═══════════════════════════════════════════════════════════════
+
+  filter(lambda x: x % 2 == 0)     if x % 2 == 0
+  ─────────────────────────────     ─────────────
+  [ 1 ] ── False ── ✗               [ 1 ] ── False ── ✗
+  [ 2 ] ── True  ── [ 2 ] ──┐       [ 2 ] ── True  ── [ 2 ] ──┐
+  [ 3 ] ── False ── ✗       │       [ 3 ] ── False ── ✗       │
+  [ 4 ] ── True  ── [ 4 ] ──┤       [ 4 ] ── True  ── [ 4 ] ──┤
+  [ 5 ] ── False ── ✗       │       [ 5 ] ── False ── ✗       │
+  [ 6 ] ── True  ── [ 6 ] ──┤       [ 6 ] ── True  ── [ 6 ] ──┤
+                      │                                │
+  map(lambda x: x**2) │              x ** 2            │
+  ────────────────── ─┤              ──────────────── ─┤
+  [ 2 ] ── (x**2) ── [ 4  ] ──┐     [ 2 ] ── (x**2) ── [ 4  ] ──┐
+  [ 4 ] ── (x**2) ── [ 16 ] ──┤     [ 4 ] ── (x**2) ── [ 16 ] ──┤
+  [ 6 ] ── (x**2) ── [ 36 ] ──┤     [ 6 ] ── (x**2) ── [ 36 ] ──┤
+                              │                                 │
+                        [4, 16, 36]                         [4, 16, 36]
+```
+
+:::note[How it works]
+Same steps, same result, the comprehension simply reads left to right as a single expression rather than nested function calls from 
+the inside out.
+:::
+
+### Beyond Lists — Dict and Set Comprehensions
+
+The same idea extends to other collections. The syntax is almost identical, only the **brackets and structure** change to reflect
+the collection type. Sets use curly braces and store unique values only, while dicts use curly braces with a `key: value` pair 
+to build a mapping.
+
+```python
+nums = [1, 2, 3, 4, 5]
+
+# Set comprehension — curly braces, no duplicates
+squares_set = {x ** 2 for x in nums}
+print(squares_set)      # {1, 4, 9, 16, 25}
+
+# Dict comprehension — key: value pairs
+squares_dict = {x: x ** 2 for x in nums}
+print(squares_dict)     # {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+```
+
+Here is how they work:
+
+```bash frame=none
+  Input: [1, 2, 3, 4, 5].   ← input list
+  
+  ═══════════════════════════════════════════════════════════════════
+  List comprehension        Set comprehension     Dict comprehension
+  [x ** 2 for x in nums]   {x ** 2 for x in nums}  {x: x**2 for x in nums}
+  ═══════════════════════════════════════════════════════════════════
+
+  [ 1 ] ── (x**2) ──  1        1  (unique)          1 ──► 1
+  [ 2 ] ── (x**2) ──  4        4  (unique)          2 ──► 4
+  [ 3 ] ── (x**2) ──  9        9  (unique)          3 ──► 9
+  [ 4 ] ── (x**2) ── 16       16  (unique)          4 ──► 16
+  [ 5 ] ── (x**2) ── 25       25  (unique)          5 ──► 25
+                      │             │                      │
+                      ▼             ▼                      ▼
+               [1, 4, 9,      {1, 4, 9,          {1:1,  2:4,  3:9,
+                16, 25]        16, 25}             4:16, 5:25}
+
+  ordered           unordered, no duplicates     key: value pairs
+  bracket []        curly braces {}              curly braces {key: value}
+```
+
+The uniqueness of sets becomes relevant when your input contains **<mark>duplicates</mark>**, a set comprehension 
+silently discards them, while a list comprehension keeps them all:
+
+```python
+# input list
+nums = [1, 2, 2, 3, 3, 3]
+
+print([x ** 2 for x in nums])     # [1, 4, 4, 9, 9, 9]   ← duplicates kept
+print({x ** 2 for x in nums})     # {1, 4, 9}            ← duplicates dropped
+```
+
+### One Important Difference from `map()` and `filter()`
+
+:::danger[list comprehensions are **not lazy**]
+Unlike `map()` and `filter()`, list comprehensions are **not lazy**, they evaluate immediately and return a full list in memory.
+
+If you need laziness, Python offers **generator expressions**, which use the same syntax but with parentheses instead of brackets:
+
+```python
+# List comprehension — evaluates immediately, all in memory
+eager  = [x ** 2 for x in range(1_000_000)]        # 1M values in RAM
+
+# Generator expression — lazy, one value at a time
+lazy   = (x ** 2 for x in range(1_000_000))         # nothing computed yet
+
+print(next(lazy))       # 0   ← pulls one value on demand
+print(next(lazy))       # 1
+print(next(lazy))       # 4
+```
+:::
+
+### Final thoughs
+
+Python offers list comprehensions as a more readable alternative for `map` and `filter`. Both are valid, **<mark>the choice is largely 
+stylistic</mark>**:
+
+| Goal | `map` / `filter` | Comprehension |
+|---|---|---|
+| Transform | `map(lambda x: x**2, nums)` | `[x**2 for x in nums]` |
+| Filter | `filter(lambda x: x>3, nums)` | `[x for x in nums if x>3]` |
+| Both | `map(..., filter(..., nums))` | `[x**2 for x in nums if x>3]` |
+| Reduce | `reduce(lambda a,x: a+x, nums)` | No direct equivalent |
+
+`reduce()` has no comprehension equivalent, it remains the go-to tool whenever you **<mark>need to collapse a collection into 
+a single value</mark>**.
+
+### Trio vs. comprehension
+
+```python title="Trio"
 from functools import reduce
 
 nums = [1, 2, 3, 4, 5]
@@ -40,8 +586,9 @@ maximum = reduce(lambda a, b: a if a > b else b, nums)  # 5
 total = reduce(lambda acc, x: acc + x, nums, 100)   # 115 (starts at 100)
 
 print(total, product, maximum)
+```
 
-
+```python title="Comprehension"
 # Python idiom — prefer comprehensions over map/filter for readability
 # These are equivalent:
 squared = list(map(lambda x: x**2, nums))

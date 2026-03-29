@@ -389,6 +389,7 @@ details.deeper summary {
   list-style: none !important;
   padding: 0.75rem 1.5rem !important;
   color: var(--color-purple-light);
+  margin-bottom: 0 !important;
 }
 
 details.deeper > summary::-webkit-details-marker {
@@ -413,10 +414,8 @@ details.deeper[open] summary::before {
 }
 
 details.deeper > div {
-  padding: 1rem 0 !important;
-}
-
-details.deeper > div {
+  margin-top: 0 !important;
+  border-top: none !important;
   padding: 1rem 1.5rem !important;
 }
 
@@ -435,7 +434,9 @@ details.exercise {
 }
 
 details.exercise > div {
-  padding-top: 0 !important;
+  margin-top: 0 !important;
+  border-top: none !important;
+  padding: 1rem 1.5rem !important;
 }
 
 details.exercise .expressive-code:first-child {
@@ -474,17 +475,6 @@ details.exercise summary::before {
 
 details.exercise[open] summary::before {
   transform: rotate(90deg) !important;
-}
-
-details.exercise > div {
-  padding: 1rem 0 !important;
-  padding-top: 0 !important;
-  margin-top: 0 !important;
-  border-top: none !important;
-}
-
-details.exercise > div {
-  padding: 1rem 1.5rem !important;
 }
 
 details.exercise .expressive-code {
