@@ -600,3 +600,288 @@ evens = [x for x in nums if x % 2 == 0]            # ← more Pythonic
 # But map/filter can be cleaner with existing named functions
 strings = list(map(str, nums))                      # Clean — no lambda needed
 ```
+
+## Gotchas
+
+List comprehensions return a **fully evaluated list** immediately, no laziness, everything computed upfront and stored in memory.
+
+```python
+# input list
+nums = [1, 2, 3, 4, 5]
+
+lazy  = map(lambda x: x ** 2, nums)       # <map object>  — not computed yet
+eager = [x ** 2 for x in nums]            # [1, 4, 9, 16, 25] — computed immediately
+
+print(type(lazy))       # <class 'map'>
+print(type(eager))      # <class 'list'>
+```
+
+```bash frame=none
+  Input: [1, 2, 3, 4, 5]
+
+  ═══════════════════════════════════════════════════════════════
+  map()  — lazy                     List Comprehension — eager
+  ═══════════════════════════════════════════════════════════════
+
+  map(lambda x: x**2, nums)         [x**2 for x in nums]
+  
+  returns immediately ──►  <map object>     returns immediately ──► [1, 4, 9, 16, 25]
+                               │                                          │
+                          nothing computed                        fully computed
+                          values sit waiting                      all in memory
+                               │
+                          only computes
+                          when consumed
+                               │
+                 next() ──► 1  (rest still waiting)
+                 next() ──► 4  (rest still waiting)
+                 next() ──► 9  (rest still waiting)
+                 ...
+
+  ═══════════════════════════════════════════════════════════════
+  Memory cost         one value at a time        all N values at once
+  Best when           large data, early exit      small data, need all values
+  ═══════════════════════════════════════════════════════════════
+```
+
+So the key difference is:
+
+- `map()` and `filter()`: **lazy**, compute on demand, memory efficient
+- List comprehension: **eager**, computes everything immediately, returns a plain `list`
+
+### Generator Expressions
+
+A generator expression is the **<mark>lazy equivalent of a list comprehension</mark>**, same syntax, but with parentheses `()` 
+instead of brackets `[]`. It returns a **generator object** that computes values on demand, exactly like `map()` and `filter()`.
+
+```python
+nums = [1, 2, 3, 4, 5]
+
+list_comp = [x ** 2 for x in nums]         # list comprehension — eager
+gen_expr  = (x ** 2 for x in nums)         # generator expression — lazy
+
+print(type(list_comp))      # <class 'list'>
+print(type(gen_expr))       # <class 'generator'>
+```
+
+```bash frame=none
+  Input: [1, 2, 3, 4, 5]
+
+  ═══════════════════════════════════════════════════════════════════
+  List Comprehension        Generator Expression        map()
+  [x**2 for x in nums]      (x**2 for x in nums)        map(lambda x: x**2, nums)
+  ═══════════════════════════════════════════════════════════════════
+
+  returns ──► [1, 4, 9,     returns ──► <generator>     returns ──► <map object>
+               16, 25]                      │                            │
+                  │                    nothing computed             nothing computed
+          fully in memory              values waiting               values waiting
+                                            │                            │
+                                  next() ──► 1                 next() ──► 1
+                                  next() ──► 4                 next() ──► 4
+                                  next() ──► 9                 next() ──► 9
+
+  ═══════════════════════════════════════════════════════════════════
+  Syntax        [x**2 for x in nums]   (x**2 for x in nums)   map(lambda x: x**2, nums)
+  Returns       list                   generator               map object
+  Lazy          ❌ No                  ✅ Yes                  ✅ Yes
+  Pythonic      ✅ Yes                 ✅ Yes                  ⚠️ Debated
+  ═══════════════════════════════════════════════════════════════════
+```
+
+```python
+nums = [1, 2, 3, 4, 5]
+gen  = (x ** 2 for x in nums)
+
+print(next(gen))        # 1
+print(next(gen))        # 4
+print(next(gen))        # 9
+# 16 and 25 never computed if we stop here
+```
+:::note[Practical rule of thumb]
+
+- Use a **list comprehension** `[]` when you need all values and will access them multiple times
+- Use a **generator expression** `()` when you only need to iterate once, or may stop early
+- Use **`map()`** when you are already working in a functional style with lambdas or named functions
+:::
+
+### Generator Object
+
+A generator object is a special Python object that **produces values one at a time, on demand, without storing them all in memory**.
+It remembers where it left off between calls, each time you ask for the next value, it resumes from where it paused.
+
+The key word is **`yield`**, it's what makes a function a generator. Unlike `return` which exits the function, 
+`yield` **pauses** it and hands back a value, keeping the function's state intact for the next call.
+
+```python
+# A regular function — computes and returns everything at once
+def regular_squares(nums):
+    results = []
+    for x in nums:
+        results.append(x ** 2)
+    return results                      # returns a complete list
+
+# A generator function — yields one value at a time
+def gen_squares(nums):
+    for x in nums:
+        yield x ** 2                    # pauses here, hands back one value
+                                        # resumes from here on next call
+```
+
+```bash frame=none
+  gen_squares([1, 2, 3, 4, 5])
+
+  ═══════════════════════════════════════════════════════════════
+  Call              Inside the function         Returns
+  ═══════════════════════════════════════════════════════════════
+
+  gen = gen_squares(nums)    (not started yet)    <generator object>
+                                    │
+  next(gen)          x=1 ── yield 1 ── ⏸ paused       1
+                                    │
+  next(gen)          x=2 ── yield 4 ── ⏸ paused       4
+                                    │
+  next(gen)          x=3 ── yield 9 ── ⏸ paused       9
+                                    │
+  next(gen)          x=4 ── yield 16 ── ⏸ paused      16
+                                    │
+  next(gen)          x=5 ── yield 25 ── ⏸ paused      25
+                                    │
+  next(gen)          (nothing left) ── StopIteration ❌
+  ═══════════════════════════════════════════════════════════════
+```
+
+```python
+gen = gen_squares([1, 2, 3, 4, 5])
+
+print(type(gen))        # <class 'generator'>
+
+print(next(gen))        # 1  ← resumes, computes x=1, pauses
+print(next(gen))        # 4  ← resumes, computes x=2, pauses
+print(next(gen))        # 9  ← resumes, computes x=3, pauses
+
+# 16 and 25 are never computed if we stop here
+```
+
+:::caution[Generators are exhausted once]
+Unlike a list, a generator can only be consumed **once**. Once all values have been yielded, it is empty:
+
+```python
+gen = gen_squares([1, 2, 3])
+
+print(list(gen))        # [1, 4, 9]  ← consumes everything
+print(list(gen))        # []         ← nothing left, already exhausted
+```
+:::
+
+## Exercises
+
+### `map()` Exercises
+
+**Exercise 1 — Basic transformation**
+Given a list of temperatures in Celsius, convert them all to Fahrenheit.
+```python
+celsius = [0, 10, 20, 30, 40]
+# expected output: [32.0, 50.0, 68.0, 104.0]
+# formula: (c * 9/5) + 32
+```
+
+**Exercise 2 — String transformation**
+Given a list of names, return them all in uppercase.
+```python
+names = ["alice", "bob", "charlie", "diana"]
+# expected output: ['ALICE', 'BOB', 'CHARLIE', 'DIANA']
+```
+
+**Exercise 3 — Working with multiple lists**
+Given two lists of numbers, return a list of their products paired by position.
+```python
+a = [1, 2, 3, 4]
+b = [10, 20, 30, 40]
+# expected output: [10, 40, 90, 160]
+# hint: map() can take two iterables
+```
+
+---
+
+### `filter()` Exercises
+
+**Exercise 4 — Basic filtering**
+Given a list of numbers, return only the odd ones.
+```python
+nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+# expected output: [1, 3, 5, 7, 9]
+```
+
+**Exercise 5 — String filtering**
+Given a list of words, return only the words longer than 4 characters.
+```python
+words = ["cat", "elephant", "dog", "butterfly", "ant", "bear"]
+# expected output: ['elephant', 'butterfly']
+```
+
+**Exercise 6 — Filtering with None**
+Given a list that contains some `None` values, return only the valid (non-None) values.
+```python
+data = [1, None, 3, None, 5, None, 7]
+# expected output: [1, 3, 5, 7]
+# hint: filter() with None as the function removes falsy values
+```
+
+---
+
+### `reduce()` Exercises
+
+**Exercise 7 — Basic accumulation**
+Given a list of numbers, find the maximum value using `reduce()` — without using `max()`.
+```python
+from functools import reduce
+nums = [3, 1, 4, 1, 5, 9, 2, 6]
+# expected output: 9
+```
+
+**Exercise 8 — String accumulation**
+Given a list of words, join them into a single sentence using `reduce()` — without using `join()`.
+```python
+from functools import reduce
+words = ["Python", "is", "fun", "to", "learn"]
+# expected output: 'Python is fun to learn'
+```
+
+**Exercise 9 — Flattening a list**
+Given a list of lists, flatten it into a single list using `reduce()`.
+```python
+from functools import reduce
+nested = [[1, 2], [3, 4], [5, 6], [7, 8]]
+# expected output: [1, 2, 3, 4, 5, 6, 7, 8]
+```
+
+---
+
+### Combined Exercises
+
+**Exercise 10 — Chain all three**
+Given a list of numbers, find the sum of the squares of all odd numbers.
+```python
+from functools import reduce
+nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+# expected output: 165  (1 + 9 + 25 + 49 + 81)
+```
+
+**Exercise 11 — Real world scenario**
+Given a list of products, calculate the total price of only the items that are in stock.
+```python
+from functools import reduce
+products = [
+    {"name": "apple",  "price": 1.5,  "in_stock": True},
+    {"name": "banana", "price": 0.5,  "in_stock": False},
+    {"name": "cherry", "price": 3.0,  "in_stock": True},
+    {"name": "date",   "price": 5.0,  "in_stock": True},
+    {"name": "elder",  "price": 2.0,  "in_stock": False},
+]
+# expected output: 9.5  (1.5 + 3.0 + 5.0)
+```
+
+---
+
+Try solving each one using `lambda` functions first, then see if a named `def` function makes it cleaner for the more complex ones.
